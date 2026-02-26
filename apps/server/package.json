@@ -1,14 +1,11 @@
 {
   "author": "Vedant Chainani <vedant@envoy1084.xyz>",
   "bugs": {
-    "url": "https://github.com/envoy1084/turbo-effect-starter/issues"
+    "url": "https://github.com/envoy1084/ens-mpc/issues"
   },
   "dependencies": {
     "@effect/platform": "^0.94.5",
-    "@effect/platform-bun": "^0.87.1",
-    "@repo/api": "workspace:*",
-    "@repo/database": "workspace:*",
-    "@repo/telemetry": "workspace:*",
+    "@effect/platform-node": "^0.104.1",
     "dotenv": "^17.3.1",
     "effect": "^3.19.19"
   },
@@ -20,14 +17,14 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
-  "homepage": "https://github.com/envoy1084/turbo-effect-starter#readme",
+  "homepage": "https://github.com/envoy1084/ens-mpc#readme",
   "keywords": [],
   "license": "MIT",
   "main": "src/index.ts",
-  "name": "@repo/server",
+  "name": "ens-mpc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/envoy1084/turbo-effect-starter"
+    "url": "https://github.com/envoy1084/ens-mpc"
   },
   "scripts": {
     "dev": "bun --watch run src/index.ts",
