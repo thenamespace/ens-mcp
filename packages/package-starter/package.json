@@ -1,0 +1,29 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "bugs": {
+    "url": "https://github.com/envoy1084/turbo-effect-starter/issues"
+  },
+  "description": "",
+  "devDependencies": {
+    "@effect/vitest": "^0.27.0",
+    "@repo/config": "workspace:*",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "homepage": "https://github.com/envoy1084/turbo-effect-starter#readme",
+  "keywords": [],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@repo/package-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/envoy1084/turbo-effect-starter"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "test": "vitest run"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "version": "0.0.0"
+}

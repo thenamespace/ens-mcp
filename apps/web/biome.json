@@ -1,0 +1,20 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "extends": "//",
+  "files": {
+    "includes": ["**", "!src/route-tree.gen.ts"]
+  },
+  "overrides": [
+    {
+      "includes": ["src/app/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
+          }
+        }
+      }
+    }
+  ],
+  "root": false
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@repo/ui/*": ["./src/*"] }
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@repo/config/tsconfig/library/react",
+  "include": ["**/*.ts", "**/*.tsx"]
+}

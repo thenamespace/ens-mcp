@@ -1,0 +1,155 @@
+# -------------------------------------
+# OS / Editor Junk
+# -------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.history
+
+# JetBrains
+.idea/
+*.iml
+
+# Backup / Temp
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+*.temp
+
+# -------------------------------------
+# Node.js / TypeScript
+# -------------------------------------
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+
+# Build Output
+dist/
+build/
+.next/
+out/
+
+# Lint / Type Check
+eslintcache
+.cache/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log
+
+# Turbo
+.turbo/
+
+# Testing & Coverage
+coverage/
+test-results/
+*.log
+.jest/
+.nyc_output/
+.tap-snapshots/
+
+# Benchmarking
+benchmarks/results/
+artillery-report.json
+*.bench.*
+
+# Package Managers
+yarn-error.log
+lerna-debug.log
+pnpm-debug.log
+
+# Husky
+.husky/_
+
+# next.js
+next-env.d.ts
+
+# Vercel
+.vercel/
+
+# tanstack
+.tanstack
+
+# -------------------------------------
+# Rust
+# -------------------------------------
+
+# Build Output
+target/
+
+# Dependencies / Package
+Cargo.toml.bk
+
+# Debugging
+*.profraw
+*.dSYM/
+*.ll
+*.bc
+*.exe
+*.out
+*.pyc
+
+# Benchmark / Coverage
+flamegraph.svg
+*.bench
+*.bench.*
+htmlcov/
+grcov_report/
+tarpaulin-report.html
+tarpaulin-report.*
+lcov.info
+
+# Docs
+book/
+*.rs.bk
+
+
+# -------------------------------------
+# Git / Misc
+# -------------------------------------
+*.pem
+*.key
+*.crt
+
+# Git Hooks
+.githooks/
+pre-commit.log
+
+# Binaries
+*.dll
+*.so
+*.dylib
+*.exe
+*.bin
+*.o
+*.obj
+*.rlib
+*.a
+*.lib
+
+# database
+prisma/db.sqlite
+prisma/db.sqlite-journal
+db.sqlite

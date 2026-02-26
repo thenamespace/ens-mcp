@@ -1,0 +1,28 @@
+{
+  "[css,graphql,javascript,json,jsonc,typescript,typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "editor.codeActionsOnSave": {
+    "source.action.useSortedAttributes.biome": "explicit",
+    "source.action.useSortedKeys.biome": "explicit",
+    "source.action.useSortedProperties.biome": "explicit",
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list"
+  ],
+  "tailwindCSS.classFunctions": ["tw", "clsx", "cva"],
+  "tailwindCSS.experimental.configFile": {
+    "packages/ui/src/styles/globals.css": ["apps/**", "packages/**"]
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

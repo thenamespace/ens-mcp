@@ -1,0 +1,234 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.2/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [":BUN:", ":NODE:"],
+              ":BLANK_LINE:",
+              ["next/**", "next"],
+              ":BLANK_LINE:",
+              [
+                "react/**",
+                "react",
+                "react-dom",
+                "react-dom/client",
+                "react-dom/server"
+              ],
+              ":BLANK_LINE:",
+              ["@tanstack/**"],
+              ":BLANK_LINE:",
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              ":PACKAGE_WITH_PROTOCOL:",
+              ":BLANK_LINE:",
+              ":ALIAS:",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        },
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "parser": { "tailwindDirectives": true }
+  },
+  "files": {
+    "includes": ["**"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true,
+      "jsxQuoteStyle": "double",
+      "quoteStyle": "double"
+    },
+    "globals": [],
+    "parser": { "jsxEverywhere": false }
+  },
+  "json": {
+    "linter": {
+      "enabled": true
+    },
+    "parser": { "allowComments": true }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "a11y": {
+        "noNoninteractiveElementInteractions": "error",
+        "recommended": true
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 24
+          }
+        },
+        "noExcessiveLinesPerFunction": {
+          "level": "error",
+          "options": {
+            "maxLines": 100,
+            "skipBlankLines": true
+          }
+        },
+        "noExcessiveNestedTestSuites": "error",
+        "noForEach": "error",
+        "noImplicitCoercions": "error",
+        "noUselessStringConcat": "error",
+        "recommended": true
+      },
+      "correctness": {
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssignments": "error",
+        "recommended": true,
+        "useSingleJsDocAsterisk": "error"
+      },
+      "nursery": {
+        "noUndeclaredEnvVars": "error"
+      },
+      "performance": {
+        "noAwaitInLoops": "error",
+        "noBarrelFile": "off",
+        "noNamespaceImport": "off",
+        "noReExportAll": "off",
+        "recommended": true
+      },
+      "security": {
+        "recommended": true
+      },
+      "style": {
+        "noCommonJs": "error",
+        "noDefaultExport": "error",
+        "noEnum": "error",
+        "noExportedImports": "error",
+        "noImplicitBoolean": "error",
+        "noInferrableTypes": "error",
+        "noNamespace": "error",
+        "noNestedTernary": "error",
+        "noSubstr": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "recommended": true,
+        "useArrayLiterals": "error",
+        "useAtIndex": "error",
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
+        "useConsistentBuiltinInstantiation": "error",
+        "useConsistentCurlyBraces": "error",
+        "useConsistentMemberAccessibility": "error",
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "type"
+          }
+        },
+        "useConst": "error",
+        "useDefaultParameterLast": "error",
+        "useDefaultSwitchClause": "error",
+        "useExplicitLengthCheck": "error",
+        "useExportsLast": "off",
+        "useExportType": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"], "requireAscii": true }
+        },
+        "useForOf": "error",
+        "useFragmentSyntax": "error",
+        "useGroupedAccessorPairs": "error",
+        "useImportType": "error",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "conventions": [
+              { "formats": ["PascalCase"], "selector": { "kind": "typeLike" } },
+              {
+                "formats": ["PascalCase", "CONSTANT_CASE", "camelCase"],
+                "selector": { "kind": "variable" }
+              },
+              {
+                "formats": ["camelCase", "PascalCase"],
+                "selector": { "kind": "function" }
+              },
+              {
+                "formats": ["camelCase"],
+                "selector": { "kind": "namespaceLike" }
+              },
+              {
+                "formats": ["CONSTANT_CASE", "snake_case", "camelCase"],
+                "selector": { "kind": "objectLiteralMember" }
+              }
+            ],
+            "requireAscii": true,
+            "strictCase": false
+          }
+        },
+        "useNodeAssertStrict": "error",
+        "useNodejsImportProtocol": "error",
+        "useNumberNamespace": "error",
+        "useNumericSeparators": "error",
+        "useObjectSpread": "error",
+        "useReactFunctionComponents": "error",
+        "useSelfClosingElements": "error",
+        "useShorthandAssign": "error",
+        "useThrowNewError": "error",
+        "useTrimStartEnd": "error"
+      },
+      "suspicious": {
+        "noAlert": "error",
+        "noConsole": "off",
+        "noEmptyBlockStatements": "error",
+        "noMisplacedAssertion": "error",
+        "noUnassignedVariables": "error",
+        "noVar": "error",
+        "recommended": true,
+        "useAwait": "error",
+        "useErrorMessage": "error",
+        "useNumberToFixedDigitsArgument": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.config.ts",
+        "**/*.config.js",
+        "**/*.config.mjs",
+        "**/*.config.cjs"
+      ],
+      "linter": { "rules": { "style": { "noDefaultExport": "off" } } }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.spec.ts"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          }
+        }
+      }
+    }
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
+}

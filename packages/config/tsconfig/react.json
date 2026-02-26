@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    // Browser APIs
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "Bundler",
+
+    // Bundler Integration
+    "noEmit": true,
+    "types": ["vite/client"],
+    "useDefineForClassFields": true
+  },
+  "extends": "./base.json"
+}

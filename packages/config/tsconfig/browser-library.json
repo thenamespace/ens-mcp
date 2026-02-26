@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // Emit
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "none",
+    // Browser APIs
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+
+    // Bundler Integration
+    "moduleResolution": "Bundler",
+    "noEmit": false,
+    "target": "ES2020"
+  },
+  "extends": "./base.json"
+}

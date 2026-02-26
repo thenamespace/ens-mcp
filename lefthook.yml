@@ -1,0 +1,15 @@
+pre-commit:
+ commands:
+  biome-check:
+   run: bun format && bun lint
+   stage_fixed: true
+
+commit-msg:
+ commands:
+  lint-commit-msg:
+   run: bun commitlint --edit
+
+pre-push:
+ commands:
+  check:
+   run: bun format && bun lint

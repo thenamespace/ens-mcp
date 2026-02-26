@@ -1,0 +1,44 @@
+{
+  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
+  "bugs": {
+    "url": "https://github.com/envoy1084/turbo-effect-starter/issues"
+  },
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.4",
+    "@commitlint/cli": "^20.4.2",
+    "@commitlint/config-conventional": "^20.4.2",
+    "@repo/config": "workspace:*",
+    "lefthook": "^2.1.1",
+    "turbo": "^2.8.10",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "homepage": "https://github.com/envoy1084/turbo-effect-starter#readme",
+  "keywords": [],
+  "license": "ISC",
+  "name": "turbo-effect-starter",
+  "packageManager": "bun@1.3.9",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/envoy1084/turbo-effect-starter.git"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "commitlint": "commitlint --edit",
+    "dev": "turbo dev",
+    "format": "bunx --bun biome format --write",
+    "format:check": "bunx --bun biome format",
+    "lint": "bunx --bun biome check --write",
+    "lint:check": "bunx --bun biome check",
+    "lint:write": "turbo lint:write",
+    "prepare": "lefthook install"
+  },
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
+}

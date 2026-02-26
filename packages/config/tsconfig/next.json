@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": true,
+    "jsx": "preserve",
+
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "noEmit": true,
+
+    "skipLibCheck": true
+  },
+  "extends": "./base.json"
+}

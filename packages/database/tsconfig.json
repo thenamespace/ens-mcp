@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@repo/config/tsconfig/library/bun",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "references": [{ "path": "../schema" }]
+}

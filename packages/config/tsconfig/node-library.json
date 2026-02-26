@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    // Emit (disable if using tsup dts)
+    "declaration": true,
+    "declarationMap": true,
+    // Node Environment
+    "lib": ["ES2022"],
+    "module": "ESNext",
+
+    // Bundler Integration
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "types": ["node"]
+  },
+  "extends": "./base.json"
+}

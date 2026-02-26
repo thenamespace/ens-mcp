@@ -1,0 +1,34 @@
+{
+  "author": "Vedant Chainani <vednta@envoy1084.xyz>",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.4",
+    "tsdown": "^0.20.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.0.18"
+  },
+  "exports": {
+    "./biome": "./biome/base.json",
+    "./biome/base": "./biome/base.json",
+    "./biome/next": "./biome/next.json",
+    "./biome/react": "./biome/react.json",
+    "./biome/test": "./biome/test.json",
+    "./tsconfig/app/next": "./tsconfig/next.json",
+    "./tsconfig/app/react": "./tsconfig/react.json",
+    "./tsconfig/app/vite": "./tsconfig/vite.json",
+    "./tsconfig/library/browser": "./tsconfig/browser-library.json",
+    "./tsconfig/library/bun": "./tsconfig/bun-library.json",
+    "./tsconfig/library/node": "./tsconfig/node-library.json",
+    "./tsconfig/library/react": "./tsconfig/react-library.json",
+    "./tsdown": "./tsdown/shared.ts",
+    "./vitest": "./vitest/shared.ts"
+  },
+  "files": [
+    "./biome",
+    "./tsconfig",
+    "./tsdown"
+  ],
+  "license": "MIT",
+  "name": "@repo/config",
+  "type": "module",
+  "version": "0.0.1"
+}

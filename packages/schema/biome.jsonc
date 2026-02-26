@@ -1,0 +1,16 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "extends": "//",
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": ["src/schema/**/*.ts", "src/relations/**/*.ts"]
+    }
+  ]
+}

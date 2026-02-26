@@ -1,0 +1,34 @@
+{
+  "dependencies": {
+    "@repo/ui": "workspace:*",
+    "@tailwindcss/vite": "^4.2.0",
+    "@tanstack/react-router": "^1.161.4",
+    "@tanstack/router-plugin": "^1.161.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.4",
+    "@tanstack/router-plugin": "^1.161.4",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-tsconfig-paths": "^6.1.1"
+  },
+  "name": "web",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "check": "biome check",
+    "dev": "vite dev",
+    "format": "biome format",
+    "lint": "biome lint",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "type": "module"
+}
