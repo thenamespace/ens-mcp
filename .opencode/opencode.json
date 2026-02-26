@@ -4,6 +4,7 @@
     "ens-local": {
       "command": ["npx", "-y", "ens-mcp"],
       "enabled": true,
+      "environment": {},
       "type": "local"
     }
   }

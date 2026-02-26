@@ -171,7 +171,12 @@
                 "selector": { "kind": "namespaceLike" }
               },
               {
-                "formats": ["CONSTANT_CASE", "snake_case", "camelCase"],
+                "formats": [
+                  "CONSTANT_CASE",
+                  "snake_case",
+                  "camelCase",
+                  "PascalCase"
+                ],
                 "selector": { "kind": "objectLiteralMember" }
               }
             ],

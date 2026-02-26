@@ -1,0 +1,24 @@
+import { Duration } from "effect";
+
+export const parseDuration = (
+  duration: string,
+  defaultDuration?: Duration.Input,
+) => {
+  let safeDuration = duration;
+
+  if (duration.includes("year")) {
+    const [amount] = duration.split("") as [string, string];
+    safeDuration = `${Number(amount) * 356} days`;
+  }
+
+  if (duration.includes("month")) {
+    const [amount] = duration.split("") as [string, string];
+    safeDuration = `${Number(amount) * 30} days`;
+  }
+
+  return (
+    // biome-ignore lint/suspicious/noExplicitAny: safe
+    Duration.fromInput(safeDuration as any) ??
+    Duration.fromInputUnsafe(defaultDuration ?? "356 days")
+  );
+};

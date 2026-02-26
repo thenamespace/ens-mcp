@@ -9,3 +9,4 @@ export const EnsLive = EnsPublicActionsLive.pipe(
 
 export * from "./ens-client";
 export * from "./public-actions";
+export * from "./schema";
