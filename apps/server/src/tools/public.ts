@@ -1,44 +1,56 @@
+import { Tool, Toolkit } from "@effect/ai";
 import { Effect, Schema } from "effect";
-import { Tool, Toolkit } from "effect/unstable/ai";
 
-import { EnsPublicActions, FormattedNamePrice } from "@/ens";
+import {
+  EnsProfile,
+  EnsPublicActions,
+  FormattedNamePrice,
+  GetEnsProfileParams,
+} from "@/ens";
 
 const GetOwner = Tool.make("GetOwner", {
   description: "Get Owner of a ens name or subname",
   failure: Schema.Never,
-  parameters: Schema.Struct({
-    name: Schema.String.annotate({
+  parameters: {
+    name: Schema.String.annotations({
       description:
         "The ENS name or subname to get the owner of, eg. vitalik.eth",
     }),
-  }),
-  success: Schema.String.pipe(Schema.optional),
+  },
+  success: Schema.Union(Schema.String, Schema.Undefined),
 });
 
 const IsNameAvailable = Tool.make("IsNameAvailable", {
   description: "Check if an ENS name is available",
   failure: Schema.Never,
-  parameters: Schema.Struct({
-    name: Schema.String.annotate({
-      description: "The ENS name to check",
+  parameters: {
+    name: Schema.String.annotations({
+      description: "The ENS name to check, e.g. vitalik.eth",
     }),
-  }),
+  },
   success: Schema.Boolean,
 });
 
 const GetNamePrice = Tool.make("GetNamePrice", {
   description: "Get the price of an ENS name",
   failure: Schema.Never,
-  parameters: Schema.Struct({
-    duration: Schema.String.annotate({
+  parameters: {
+    duration: Schema.String.annotations({
       description:
         "The duration for which name should be minted, eg. 1 second, 1 week, 5 days, etc. Supported Units: nano(s) until year(s), should be in format of <amount> <unit>.",
     }),
-    name: Schema.String.annotate({
+    name: Schema.String.annotations({
       description: "The ENS name to get the price of",
     }),
-  }),
+  },
   success: FormattedNamePrice,
+});
+
+const GetProfileDetails = Tool.make("GetProfileDetails", {
+  description: "Get the price of an ENS name",
+  failure: Schema.Never,
+  parameters: GetEnsProfileParams.fields,
+  success: EnsProfile,
 });
 
 export const EnsPublicActionsTools = Toolkit.make(

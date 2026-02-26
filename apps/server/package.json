@@ -7,10 +7,13 @@
     "url": "https://github.com/envoy1084/ens-mpc/issues"
   },
   "dependencies": {
-    "@effect/platform-node": "4.0.0-beta.15",
+    "@effect/ai": "^0.33.2",
+    "@effect/cli": "^0.73.2",
+    "@effect/platform": "^0.94.5",
+    "@effect/platform-node": "0.104.1",
     "@ensdomains/ensjs": "^4.2.2",
     "dotenv": "^17.3.1",
-    "effect": "4.0.0-beta.15",
+    "effect": "3.19.19",
     "viem": "^2.46.3"
   },
   "description": "",
@@ -25,7 +28,7 @@
   "keywords": [],
   "license": "MIT",
   "main": "src/index.ts",
-  "name": "ens-mpc",
+  "name": "ens-mcp",
   "repository": {
     "type": "git",
     "url": "https://github.com/envoy1084/ens-mpc"
