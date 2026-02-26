@@ -5,7 +5,7 @@ import { Layer, Logger } from "effect";
 import { McpServer } from "effect/unstable/ai";
 import { HttpRouter } from "effect/unstable/http";
 
-import { McpLive } from ".";
+import { McpLive } from "./mcp";
 
 export const startStdioServer = () =>
   Layer.launch(

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     // Emit (disable if using tsup dts)
     "declaration": true,
     "declarationMap": true,

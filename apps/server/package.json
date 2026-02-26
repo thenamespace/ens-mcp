@@ -8,8 +8,10 @@
   },
   "dependencies": {
     "@effect/platform-node": "4.0.0-beta.15",
+    "@ensdomains/ensjs": "^4.2.2",
     "dotenv": "^17.3.1",
-    "effect": "4.0.0-beta.15"
+    "effect": "4.0.0-beta.15",
+    "viem": "^2.46.3"
   },
   "description": "",
   "devDependencies": {
@@ -30,7 +32,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "bun --watch run src/index.ts"
+    "dev": "bun --watch run src/cli.ts"
   },
   "sideEffects": false,
   "type": "module",
