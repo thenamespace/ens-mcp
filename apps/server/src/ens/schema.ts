@@ -2,13 +2,13 @@
 import { Schema } from "effect";
 
 const PriceUnits = Schema.Struct({
-  eth: Schema.String.annotations({
+  eth: Schema.String.annotate({
     description: "Amount in eth units",
   }),
-  gwei: Schema.String.annotations({
+  gwei: Schema.String.annotate({
     description: "Amount in gwei units",
   }),
-  wei: Schema.String.annotations({
+  wei: Schema.String.annotate({
     description: "Amount in wei units",
   }),
 });
@@ -16,13 +16,13 @@ const PriceUnits = Schema.Struct({
 export type PriceUnits = typeof PriceUnits.Type;
 
 export const FormattedNamePrice = Schema.Struct({
-  base: PriceUnits.annotations({
+  base: PriceUnits.annotate({
     description: "Base price of the name",
   }),
-  premium: PriceUnits.annotations({
+  premium: PriceUnits.annotate({
     description: "Premium price of the name",
   }),
-  total: PriceUnits.annotations({
+  total: PriceUnits.annotate({
     description: "Total price of the name",
   }),
 });
@@ -30,82 +30,90 @@ export const FormattedNamePrice = Schema.Struct({
 export type FormattedNamePrice = typeof FormattedNamePrice.Type;
 
 export const EnsProfile = Schema.Struct({
-  name: Schema.String.annotations({
+  name: Schema.String.annotate({
     description: "The ENS name as requested.",
   }),
 
-  normalizedName: Schema.String.annotations({
+  normalizedName: Schema.String.annotate({
     description:
       "The ENS name normalized to lowercase with proper ENS normalization.",
   }),
 
-  ownerAddress: Schema.String.annotations({
+  ownerAddress: Schema.String.annotate({
     description: "Address of the owner of the name",
   }),
 
-  resolverAddress: Schema.NullOr(Schema.String).annotations({
+  resolverAddress: Schema.NullOr(Schema.String).annotate({
     description: "Address of the resolver contract for the name",
   }),
 
-  isWrapped: Schema.Boolean.annotations({
+  isWrapped: Schema.Boolean.annotate({
     description: "Boolean indicating if the name is wrapped",
   }),
 
   expiry: Schema.NullOr(
     Schema.Struct({
-      timestamp: Schema.Number.annotations({
+      timestamp: Schema.Number.annotate({
         description: "Expiry timestamp in seconds since Unix epoch.",
       }),
 
-      isoDate: Schema.String.annotations({
+      isoDate: Schema.String.annotate({
         description: "Expiry date in ISO 8601 format.",
       }),
 
-      secondsRemaining: Schema.Number.annotations({
+      secondsRemaining: Schema.Number.annotate({
         description: "Number of seconds remaining until expiry. 0 if expired.",
       }),
 
-      status: Schema.Literal("active", "gracePeriod", "expired").annotations({
+      status: Schema.Literals(["active", "gracePeriod", "expired"]).annotate({
         description: "Current expiry status.",
       }),
 
       gracePeriodEndsAt: Schema.optional(
-        Schema.Number.annotations({
-          description: "Timestamp when grace period ends (if applicable).",
+        Schema.Number.annotate({
+          description:
+            "Timestamp in seconds when grace period ends (if applicable).",
+        }),
+      ),
+
+      gracePeriodEndsAtIso: Schema.optional(
+        Schema.String.annotate({
+          description:
+            "Timestamp in ISO 8601 format when grace period ends (if applicable).",
         }),
       ),
     }),
-  ).annotations({
+  ).annotate({
     description: "Expiry information of the name",
   }),
 
   addresses: Schema.mutable(
     Schema.Array(
       Schema.Struct({
-        coinType: Schema.Number.annotations({
+        coinType: Schema.Number.annotate({
           description: "SLIP-44 coin type (e.g., 60 for ETH, 0 for BTC)",
         }),
-        symbol: Schema.String.annotations({
+        symbol: Schema.String.annotate({
           description: "Human-readable symbol like ETH, BTC, etc.",
         }),
-        value: Schema.String.annotations({
+        value: Schema.String.annotate({
           description: "Resolved address for the coin type.",
         }),
       }),
     ),
-  ).annotations({
+  ).annotate({
     description: "Address Records associated with the name",
   }),
 
   contentHash: Schema.optional(
     Schema.Struct({
-      protocolType: Schema.NullOr(Schema.String).annotations({
+      protocolType: Schema.NullOr(Schema.String).annotate({
         description: "Protocol of the content hash (e.g., ipfs, ipns, sia).",
       }),
-      decoded: Schema.String.annotations({
+      decoded: Schema.String.annotate({
         description: "Decoded content hash value.",
       }),
-    }).annotations({
+    }).annotate({
       description: "The content hash of the name",
     }),
   ),
@@ -113,16 +121,16 @@ export const EnsProfile = Schema.Struct({
   records: Schema.mutable(
     Schema.Array(
       Schema.Struct({
-        key: Schema.String.annotations({
+        key: Schema.String.annotate({
           description:
             "Text record key (e.g., email, url, avatar, com.twitter).",
         }),
-        value: Schema.String.annotations({
+        value: Schema.String.annotate({
           description: "Value of the text record.",
         }),
       }),
     ),
-  ).annotations({
+  ).annotate({
     description: "Text Records associated with the name",
   }),
 });
@@ -130,19 +138,19 @@ export const EnsProfile = Schema.Struct({
 export type EnsProfile = typeof EnsProfile.Type;
 
 export const GetEnsProfileParams = Schema.Struct({
-  name: Schema.String.annotations({
+  name: Schema.String.annotate({
     description: "ENS name to fetch profile information for.",
   }),
-  contentHash: Schema.optional(Schema.Boolean).annotations({
+  contentHash: Schema.optional(Schema.Boolean).annotate({
     description: "Include content hash information. Defaults to false.",
   }),
-  textRecords: Schema.optional(Schema.Array(Schema.String)).annotations({
+  textRecords: Schema.optional(Schema.Array(Schema.String)).annotate({
     description:
       "Specific ENS text record keys to retrieve (e.g., email, url avatar, com.twitter).",
   }),
   coinRecords: Schema.optional(
-    Schema.Array(Schema.Union(Schema.String, Schema.Number)),
-  ).annotations({
+    Schema.Array(Schema.Union([Schema.String, Schema.Number])),
+  ).annotate({
     description:
       "Specific ENS coin record keys to retrieve, supports both Symbols (ETH,BTC.SOL) and Coin Types (60,0).",
   }),

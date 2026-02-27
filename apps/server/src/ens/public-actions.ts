@@ -1,4 +1,4 @@
-import { Context, Duration, Effect, Layer } from "effect";
+import { Duration, Effect, Layer, ServiceMap } from "effect";
 
 import { humanizeWeiUnits, parseDuration } from "@/helpers";
 
@@ -10,7 +10,7 @@ import type {
   GetEnsProfileParams,
 } from "./schema";
 
-export type EnsPublicActionsType = {
+export type EnsPublicActions = {
   isNameAvailable: (name: string) => Effect.Effect<boolean>;
   getPrice: (
     name: string,
@@ -19,10 +19,8 @@ export type EnsPublicActionsType = {
   getEnsProfile: (params: GetEnsProfileParams) => Effect.Effect<EnsProfile>;
 };
 
-export class EnsPublicActions extends Context.Tag("EnsPublicActions")<
-  EnsClient,
-  EnsPublicActionsType
->() {}
+export const EnsPublicActions =
+  ServiceMap.Service<EnsPublicActions>("EnsPublicActions");
 
 export const EnsPublicActionsLive = Layer.effect(
   EnsPublicActions,

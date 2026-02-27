@@ -1,5 +1,5 @@
-import { Tool, Toolkit } from "@effect/ai";
 import { Effect, Schema } from "effect";
+import { Tool, Toolkit } from "effect/unstable/ai";
 
 import {
   EnsPublicActions,
@@ -10,26 +10,26 @@ import {
 const IsNameAvailable = Tool.make("is_name_available", {
   description: "Check if an ENS name is available",
   failure: Schema.Never,
-  parameters: {
-    name: Schema.String.annotations({
+  parameters: Schema.Struct({
+    name: Schema.String.annotate({
       description: "The ENS name to check, e.g. vitalik.eth",
     }),
-  },
+  }),
   success: Schema.Boolean,
 });
 
 const GetNamePrice = Tool.make("get_name_price", {
   description: "Get the price of an ENS name",
   failure: Schema.Never,
-  parameters: {
-    duration: Schema.String.annotations({
+  parameters: Schema.Struct({
+    duration: Schema.String.annotate({
       description:
         "The duration for which name should be minted, eg. 1 second, 1 week, 5 days, etc. Supported Units: nano(s) until year(s), should be in format of <amount> <unit>.",
     }),
-    name: Schema.String.annotations({
+    name: Schema.String.annotate({
       description: "The ENS name to get the price of",
     }),
-  },
+  }),
   success: FormattedNamePrice,
 });
 
@@ -60,7 +60,7 @@ If no specific textRecords or coinRecords  are requested, a minimal profile (own
 const GetProfileDetails = Tool.make("get_profile_details", {
   description: GetEnsProfileDescription,
   failure: Schema.Never,
-  parameters: GetEnsProfileParams.fields,
+  parameters: GetEnsProfileParams,
   success: Schema.Any,
 });
 

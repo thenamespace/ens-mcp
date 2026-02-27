@@ -15,11 +15,11 @@ import {
 import { normalise } from "@ensdomains/ensjs/utils";
 import { type Address, zeroAddress } from "viem";
 
-import type { EnsClientType } from "./ens-client";
+import type { EnsClient } from "./ens-client";
 import type { EnsProfile, GetEnsProfileParams } from "./schema";
 
 export const getEnsProfileInternal = async (
-  client: EnsClientType,
+  client: EnsClient,
   params: GetEnsProfileParams,
 ) => {
   const textRecordsCall = (params.textRecords ?? []).map((record) =>
@@ -50,9 +50,9 @@ export const getEnsProfileInternal = async (
   const records: EnsProfile["records"] = [];
   const addresses: EnsProfile["addresses"] = [];
 
-  res.slice(0, textRecordsCall.length).forEach((r) => {
+  res.slice(0, textRecordsCall.length).forEach((r, i) => {
     const record = r as string | null;
-    const textKey = (params.textRecords ?? [])[0] as string;
+    const textKey = (params.textRecords ?? [])[i] as string;
     records.push({
       key: textKey,
       value: record ?? "",
@@ -92,19 +92,26 @@ export const getEnsProfileInternal = async (
     textRecordsCall.length + addressRecordCalls.length + 2,
   ) as GetExpiryReturnType;
 
-  const expiry: EnsProfile["expiry"] = e
-    ? {
-        gracePeriodEndsAt:
-          Math.floor(e.expiry.date.getTime() / 1000) + e.gracePeriod,
-        isoDate: e.expiry.date.toISOString(),
-        secondsRemaining: Math.max(
-          0,
-          Math.floor((e.expiry.date.getTime() - Date.now()) / 1000),
-        ),
-        status: e.status,
-        timestamp: Math.floor(e.expiry.date.getTime() / 1000),
-      }
-    : null;
+  const expiry = (() => {
+    if (!e) return null;
+    const expiryDate = e.expiry.date;
+    const gradePeriodEndDate = new Date(
+      expiryDate.getTime() + e.gracePeriod * 1000,
+    );
+    const secondRemaining = Math.max(
+      0,
+      gradePeriodEndDate.getTime() - Date.now(),
+    );
+
+    return {
+      gracePeriodEndsAt: gradePeriodEndDate.getTime() / 1000,
+      gracePeriodEndsAtIso: gradePeriodEndDate.toISOString(),
+      isoDate: expiryDate.toISOString(),
+      secondsRemaining: secondRemaining / 1000,
+      status: e.status,
+      timestamp: expiryDate.getTime() / 1000,
+    };
+  })();
 
   const o = res.at(
     textRecordsCall.length + addressRecordCalls.length + 3,

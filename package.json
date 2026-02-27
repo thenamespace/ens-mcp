@@ -29,16 +29,12 @@
     "build": "turbo build",
     "commitlint": "commitlint --edit",
     "dev": "turbo dev",
-    "format": "bunx --bun biome format --write",
-    "format:check": "bunx --bun biome format",
-    "lint": "bunx --bun biome check --write",
-    "lint:check": "bunx --bun biome check",
+    "format": "pnpm exec biome format --write",
+    "format:check": "pnpm exec biome format",
+    "lint": "pnpm exec biome check --write",
+    "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
-    "prepare": "lefthook install"
+    "prepare": "if [ \"$SKIP_LEFTHOOK\" = \"true\" ] || [ \"$CI\" = \"true\" ]; then echo 'Skipping lefthook'; else lefthook install; fi"
   },
-  "version": "1.0.0",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ]
+  "version": "1.0.0"
 }

@@ -1,9 +1,9 @@
 import { createServer } from "node:http";
 
-import { McpServer } from "@effect/ai";
-import { HttpApiBuilder, HttpRouter, HttpServer } from "@effect/platform";
-import { NodeHttpServer, NodeSink, NodeStream } from "@effect/platform-node";
+import { NodeHttpServer, NodeStdio } from "@effect/platform-node";
 import { Layer, Logger } from "effect";
+import { McpServer } from "effect/unstable/ai";
+import { HttpRouter } from "effect/unstable/http";
 
 import { McpLive } from "./mcp";
 
@@ -11,12 +11,11 @@ export const startStdioServer = () =>
   Layer.launch(
     McpServer.layerStdio({
       name: "ENS MCP Server",
-      stdin: NodeStream.stdin,
-      stdout: NodeSink.stdout,
       version: "0.0.1",
     }).pipe(
       Layer.provideMerge(McpLive),
-      Layer.provide(Logger.add(Logger.prettyLogger({ stderr: true }))),
+      Layer.provide(NodeStdio.layer),
+      Layer.provide(Layer.succeed(Logger.LogToStderr)(true)),
     ),
   );
 
@@ -26,10 +25,8 @@ const McpRouter = McpServer.layerHttp({
   version: "0.0.1",
 }).pipe(
   Layer.provideMerge(McpLive),
-  Layer.provideMerge(HttpRouter.Default.serve()),
-  HttpServer.withLogAddress,
   Layer.provide(
-    HttpApiBuilder.middlewareCors({
+    HttpRouter.cors({
       allowedHeaders: ["Content-Type", "Authorization", "mcp-protocol-version"],
       allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedOrigins: ["*"],
@@ -40,7 +37,7 @@ const McpRouter = McpServer.layerHttp({
 
 export const startHttpServer = (port: number) =>
   Layer.launch(
-    McpRouter.pipe(
+    HttpRouter.serve(McpRouter).pipe(
       Layer.provideMerge(NodeHttpServer.layer(createServer, { port })),
     ),
   );

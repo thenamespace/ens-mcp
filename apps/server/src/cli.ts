@@ -1,16 +1,22 @@
-import { Command, Options } from "@effect/cli";
-import { NodeContext, NodeRuntime } from "@effect/platform-node";
+import {
+  NodeChildProcessSpawner,
+  NodeFileSystem,
+  NodePath,
+  NodeRuntime,
+  NodeTerminal,
+} from "@effect/platform-node";
 import { Console, Effect } from "effect";
+import { Command, Flag } from "effect/unstable/cli";
 
 import { startHttpServer, startStdioServer } from "./app";
 
-const http = Options.boolean("http").pipe(
-  Options.withDescription("Start the server using HTTP transport."),
+const http = Flag.boolean("http").pipe(
+  Flag.withDescription("Start the server using HTTP transport."),
 );
-const port = Options.integer("port").pipe(
-  Options.withDefault(3000),
-  Options.withAlias("p"),
-  Options.withDescription("The port to listen on when using HTTP transport."),
+const port = Flag.integer("port").pipe(
+  Flag.withDefault(3000),
+  Flag.withAlias("p"),
+  Flag.withDescription("The port to listen on when using HTTP transport."),
 );
 
 const command = Command.make("ens-mcp", { http, port }, ({ http, port }) =>
@@ -25,11 +31,15 @@ const command = Command.make("ens-mcp", { http, port }, ({ http, port }) =>
   }),
 );
 
-const Layers = NodeContext.layer;
-
 const cli = Command.run(command, {
-  name: "ens-mcp",
   version: "v0.0.1",
 });
 
-cli(process.argv).pipe(Effect.provide(Layers)).pipe(NodeRuntime.runMain);
+cli.pipe(
+  Effect.provide(NodeTerminal.layer),
+  Effect.provide(NodeChildProcessSpawner.layer),
+  Effect.provide(NodePath.layer),
+  Effect.provide(NodeFileSystem.layer),
+  Effect.scoped,
+  NodeRuntime.runMain,
+);

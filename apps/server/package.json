@@ -4,16 +4,13 @@
     "ens-mcp": "./dist/cli.mjs"
   },
   "bugs": {
-    "url": "https://github.com/envoy1084/ens-mpc/issues"
+    "url": "https://github.com/envoy1084/ens-mcp/issues"
   },
   "dependencies": {
-    "@effect/ai": "^0.33.2",
-    "@effect/cli": "^0.73.2",
-    "@effect/platform": "^0.94.5",
-    "@effect/platform-node": "0.104.1",
+    "@effect/platform-node": "4.0.0-beta.19",
     "@ensdomains/ensjs": "^4.2.2",
     "dotenv": "^17.3.1",
-    "effect": "3.19.19",
+    "effect": "4.0.0-beta.19",
     "viem": "^2.46.3"
   },
   "description": "",
@@ -24,14 +21,16 @@
     "tsdown": "^0.20.3",
     "typescript": "^5.9.3"
   },
-  "homepage": "https://github.com/envoy1084/ens-mpc#readme",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/envoy1084/ens-mcp#readme",
   "keywords": [],
   "license": "MIT",
-  "main": "src/index.ts",
   "name": "ens-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/envoy1084/ens-mpc"
+    "url": "https://github.com/envoy1084/ens-mcp"
   },
   "scripts": {
     "build": "tsdown",
