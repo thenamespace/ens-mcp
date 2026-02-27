@@ -1,11 +1,9 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: safe */
-
-import { Config, Context, Duration, Effect, Layer } from "effect";
-import type { Address } from "viem";
+import { Context, Duration, Effect, Layer } from "effect";
 
 import { humanizeWeiUnits, parseDuration } from "@/helpers";
 
 import { EnsClient } from "./ens-client";
+import { getEnsProfileInternal } from "./helpers";
 import type {
   EnsProfile,
   FormattedNamePrice,
@@ -13,13 +11,12 @@ import type {
 } from "./schema";
 
 export type EnsPublicActionsType = {
-  getOwner: (name: string) => Effect.Effect<Address | undefined>;
   isNameAvailable: (name: string) => Effect.Effect<boolean>;
   getPrice: (
     name: string,
     duration: string,
   ) => Effect.Effect<FormattedNamePrice>;
-  // getEnsProfile: (params: GetEnsProfileParams) => Effect.Effect<EnsProfile>;
+  getEnsProfile: (params: GetEnsProfileParams) => Effect.Effect<EnsProfile>;
 };
 
 export class EnsPublicActions extends Context.Tag("EnsPublicActions")<
@@ -33,15 +30,13 @@ export const EnsPublicActionsLive = Layer.effect(
     const client = yield* EnsClient;
 
     return {
-      // getEnsProfile: (params) =>
-      //   Effect.gen(function* () {
-      //     const textRecordsCall = params.textRecords;
-      //     return {};
-      //   }),
-      getOwner: (name) =>
-        Effect.promise(async () => {
-          const res = await client.getOwner({ name });
-          return res?.owner;
+      getEnsProfile: (params) =>
+        Effect.gen(function* () {
+          const profile = yield* Effect.promise(() =>
+            getEnsProfileInternal(client, params),
+          );
+
+          return profile;
         }),
       getPrice: (name, duration) =>
         Effect.promise(async () => {
