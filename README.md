@@ -266,6 +266,40 @@ RPC_URL=https://your-rpc-provider.com npx -y ens-mcp
 ```
 </details>
 
+## 💬 Example Natural Language Queries
+
+Once ENS MCP is installed, you can ask things like:
+
+```markdown
+1️⃣ Basic Lookup
+
+> Who owns vitalik.eth?
+
+2️⃣ Resolver & Expiry
+
+> What is the resolver and expiry date of vitalik.eth?
+
+3️⃣ Records & Addresses
+
+> Give me the ETH address and Twitter handle for vitalik.eth.
+
+4️⃣ Reverse Lookup
+
+> What ENS names are owned by 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?
+
+5️⃣ Subnames
+
+> List all subdomains under base.eth.
+
+6️⃣ Portfolio Analysis
+
+> Show me all ENS names owned by this address and tell me which ones are expiring soon.
+
+7️⃣ Conditional Acquisition Strategy
+
+> I want to get example.eth. How much does it cost for 2 years? And if it’s not available, give me the owner details and socials so I can contact them.
+```
+
 ## Available Tools
 
 | Tool | Description |
