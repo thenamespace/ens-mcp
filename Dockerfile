@@ -25,10 +25,10 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
 
 # Build the application
-RUN pnpm run build --filter=ens-mcp
+RUN pnpm run build --filter=./apps/server
 
 # Prune to production deps only for this app
-RUN pnpm --filter=ens-mcp deploy --prod /prod
+RUN pnpm --filter=./apps/server deploy --prod /prod
 
 # -----------------------
 # Serve stage

@@ -21,6 +21,7 @@
   "license": "MIT",
   "name": "ens-mpc-server",
   "packageManager": "pnpm@10.15.0",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/envoy1084/ens-mpc.git"

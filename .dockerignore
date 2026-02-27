@@ -1,5 +1,10 @@
 node_modules
+.pnpm-store
+.git
+.gitignore
+Dockerfile
+*.log
 dist
-.env
-.env.*
-.turbo
+.cache
+turbo
+.env*
