@@ -257,12 +257,13 @@ The server will be available at `http://localhost:8080/mcp`.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `RPC_URL` | Ethereum mainnet RPC URL | Public mainnet RPC |
+| `RPC_URL` | Ethereum mainnet RPC URL | Viem Provided Public RPC |
+| `SUBGRAPH_URL` | ENS subgraph URL | ENSNode Public Subgraph |
 
-Example with custom RPC:
+Example with custom RPC and Subgraph:
 
 ```bash
-RPC_URL=https://your-rpc-provider.com npx -y ens-mcp
+RPC_URL=https://your-rpc-provider.com SUBGRAPH_URL=https://your-subgraph-provider.com npx -y ens-mcp
 ```
 </details>
 

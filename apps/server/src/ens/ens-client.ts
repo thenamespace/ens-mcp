@@ -16,11 +16,15 @@ const makeEnsClient = Effect.gen(function* () {
     ? Redacted.value(config.rpcUrl.value)
     : undefined;
 
+  const subgraphUrl = Option.isSome(config.subgraphUrl)
+    ? Redacted.value(config.subgraphUrl.value)
+    : "https://api.alpha.ensnode.io/subgraph";
+
   const chain = {
     ...addEnsContracts(mainnet),
     subgraphs: {
       ens: {
-        url: "https://api.alpha.ensnode.io/subgraph",
+        url: subgraphUrl,
       },
     },
   };
