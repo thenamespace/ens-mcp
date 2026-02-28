@@ -9,23 +9,27 @@ import { McpLive } from "./mcp";
 
 export const startStdioServer = () =>
   Layer.launch(
-    McpServer.layerStdio({
-      name: "ENS MCP Server",
-      version: "0.0.1",
-    }).pipe(
-      Layer.provideMerge(McpLive),
+    McpLive.pipe(
+      Layer.provideMerge(
+        McpServer.layerStdio({
+          name: "ENS MCP Server",
+          version: "0.0.1",
+        }),
+      ),
       Layer.provide(NodeStdio.layer),
       Layer.provide(Layer.succeed(Logger.LogToStderr)(true)),
     ),
   );
 
-const McpRouter = McpServer.layerHttp({
-  name: "ENS MCP Server",
-  path: "/mcp",
-  version: "0.0.1",
-}).pipe(
-  Layer.provideMerge(McpLive),
-  Layer.provide(
+const McpRouter = McpLive.pipe(
+  Layer.provideMerge(
+    McpServer.layerHttp({
+      name: "ENS MCP Server",
+      path: "/mcp",
+      version: "0.0.1",
+    }),
+  ),
+  Layer.provideMerge(
     HttpRouter.cors({
       allowedHeaders: ["Content-Type", "Authorization", "mcp-protocol-version"],
       allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

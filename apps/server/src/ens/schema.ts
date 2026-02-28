@@ -157,3 +157,84 @@ export const GetEnsProfileParams = Schema.Struct({
 });
 
 export type GetEnsProfileParams = typeof GetEnsProfileParams.Type;
+export const GenericName = Schema.Struct({
+  name: Schema.String.annotate({
+    description: "Name string",
+  }),
+  creation: Schema.Struct({
+    isoDate: Schema.String.annotate({
+      description: "Initial name creation time in ISO 8601 format",
+    }),
+    timestamp: Schema.Number.annotate({
+      description: "Initial name creation time in seconds since Unix epoch",
+    }),
+  }),
+  registration: Schema.Struct({
+    isoDate: Schema.String.annotate({
+      description: "Registration date of name in ISO 8601 format",
+    }),
+    timestamp: Schema.Number.annotate({
+      description: "Registration date of name in seconds since Unix epoch",
+    }),
+  }),
+  expiry: Schema.Struct({
+    isoDate: Schema.String.annotate({
+      description: "Expiry date of name in ISO 8601 format",
+    }),
+    timestamp: Schema.Number.annotate({
+      description: "Expiry date of name in seconds since Unix epoch",
+    }),
+    secondsRemaining: Schema.Number.annotate({
+      description: "Seconds remaining until expiry. 0 if expired.",
+    }),
+  }),
+  ownerAddress: Schema.String.annotate({
+    description: "Current owner address of the subname",
+  }),
+  resolverAddress: Schema.String.annotate({
+    description: "Resolver contract address",
+  }),
+  isWrapped: Schema.Boolean.annotate({
+    description: "Whether the name is wrapped using ENS NameWrapper",
+  }),
+});
+
+export type GenericName = typeof GenericName.Type;
+
+export const GetSubnamesForNameParams = Schema.Struct({
+  name: Schema.String.annotate({
+    description: "Name to get subnames for",
+  }),
+  searchString: Schema.optional(Schema.String).annotate({
+    description: "Filter subnames by label substring match. Case-insensitive.",
+  }),
+  allowExpired: Schema.optional(Schema.Boolean).annotate({
+    description:
+      "Include expired subnames in the results. Defaults to false (only active names returned).",
+  }),
+  allowDeleted: Schema.optional(Schema.Boolean).annotate({
+    description: "Include deleted subnames in the results. Defaults to false.",
+  }),
+  orderBy: Schema.optional(
+    Schema.Literals(["expiryDate", "name", "labelName", "createdAt"]),
+  ).annotate({
+    description: "Parameter to order names by (default: name)",
+  }),
+  orderDirection: Schema.optional(Schema.Literals(["asc", "desc"])).annotate({
+    description: "Direction to order names in (default: asc)",
+  }),
+  // TODO: This seems too much, should switch to cursor based pagination
+  // previousPage: Schema.UndefinedOr(Schema.Array(GenericName)).annotate({
+  //   description: "Previous page of subnames, used for pagination",
+  // }),
+  pageSize: Schema.optional(Schema.Number).annotate({
+    description: "Page size (default: 100)",
+  }),
+});
+
+export type GetSubnamesForNameParams = typeof GetSubnamesForNameParams.Type;
+
+export const GetSubnamesForNameResponse = Schema.Struct({
+  subnames: Schema.Array(GenericName),
+});
+export type GetSubnamesForNameResponse = typeof GetSubnamesForNameResponse.Type;

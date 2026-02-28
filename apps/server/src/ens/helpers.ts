@@ -12,11 +12,14 @@ import {
   getResolver,
   getTextRecord,
 } from "@ensdomains/ensjs/public";
+import type { Name } from "@ensdomains/ensjs/subgraph";
 import { normalise } from "@ensdomains/ensjs/utils";
 import { type Address, zeroAddress } from "viem";
 
+import { getSecondsRemaining, toLLMDate } from "@/helpers";
+
 import type { EnsClient } from "./ens-client";
-import type { EnsProfile, GetEnsProfileParams } from "./schema";
+import type { EnsProfile, GenericName, GetEnsProfileParams } from "./schema";
 
 export const getEnsProfileInternal = async (
   client: EnsClient,
@@ -98,18 +101,13 @@ export const getEnsProfileInternal = async (
     const gradePeriodEndDate = new Date(
       expiryDate.getTime() + e.gracePeriod * 1000,
     );
-    const secondRemaining = Math.max(
-      0,
-      gradePeriodEndDate.getTime() - Date.now(),
-    );
 
     return {
       gracePeriodEndsAt: gradePeriodEndDate.getTime() / 1000,
       gracePeriodEndsAtIso: gradePeriodEndDate.toISOString(),
-      isoDate: expiryDate.toISOString(),
-      secondsRemaining: secondRemaining / 1000,
+      secondsRemaining: getSecondsRemaining(gradePeriodEndDate),
       status: e.status,
-      timestamp: expiryDate.getTime() / 1000,
+      ...toLLMDate(expiryDate),
     };
   })();
 
@@ -132,4 +130,23 @@ export const getEnsProfileInternal = async (
   };
 
   return data;
+};
+
+export const nameToGenericName = (name: Name): GenericName => {
+  const registrationDate = name.registrationDate?.date ?? new Date();
+  const expiryDate = name.expiryDate?.date ?? new Date();
+  const creationDate = name.createdAt?.date ?? new Date();
+
+  return {
+    creation: toLLMDate(creationDate),
+    expiry: {
+      ...toLLMDate(expiryDate),
+      secondsRemaining: getSecondsRemaining(expiryDate),
+    },
+    isWrapped: name.wrappedOwner !== null,
+    name: name.name ?? "",
+    ownerAddress: name.wrappedOwner ?? name.owner,
+    registration: toLLMDate(registrationDate),
+    resolverAddress: name.resolvedAddress ?? zeroAddress,
+  };
 };

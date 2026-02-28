@@ -2,9 +2,18 @@ import { Layer } from "effect";
 import { McpServer } from "effect/unstable/ai";
 
 import { EnsLive } from "./ens";
-import { EnsPublicActionsTools, EnsPublicActionsToolsHandlers } from "./tools";
+import {
+  EnsPublicActionsTools,
+  EnsPublicActionsToolsHandlers,
+  EnsSubgraphActionsTools,
+  EnsSubgraphActionsToolsHandlers,
+} from "./tools";
 
 export const McpLive = McpServer.toolkit(EnsPublicActionsTools).pipe(
+  Layer.provideMerge(
+    Layer.effectDiscard(McpServer.registerToolkit(EnsSubgraphActionsTools)),
+  ),
   Layer.provideMerge(EnsPublicActionsToolsHandlers),
+  Layer.provideMerge(EnsSubgraphActionsToolsHandlers),
   Layer.provideMerge(EnsLive),
 );
