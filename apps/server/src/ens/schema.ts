@@ -303,3 +303,22 @@ export const GetNameHistoryResponse = Schema.Struct({
 });
 
 export type GetNameHistoryResponse = typeof GetNameHistoryResponse.Type;
+
+export const GetSubgraphRecordsParams = Schema.Struct({
+  name: Schema.String.annotate({
+    description: "ENS name to get records for",
+  }),
+});
+
+export type GetSubgraphRecordsParams = typeof GetSubgraphRecordsParams.Type;
+
+export const GetSubgraphRecordsResponse = Schema.Struct({
+  texts: Schema.Array(Schema.String).annotate({
+    description: "Text records associated with the name",
+  }),
+  coins: Schema.Array(Schema.Number).annotate({
+    description: "Coin types associated with the name",
+  }),
+});
+
+export type GetSubgraphRecordsResponse = typeof GetSubgraphRecordsResponse.Type;

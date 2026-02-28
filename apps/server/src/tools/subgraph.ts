@@ -7,6 +7,8 @@ import {
   GetNameHistoryResponse,
   GetNamesForAddressParams,
   GetNamesForAddressResponse,
+  GetSubgraphRecordsParams,
+  GetSubgraphRecordsResponse,
   GetSubnamesForNameParams,
   GetSubnamesForNameResponse,
 } from "@/ens";
@@ -66,10 +68,25 @@ const GetNameHistory = Tool.make("get_name_history", {
   success: GetNameHistoryResponse,
 });
 
+const GetSubgraphRecordsDescription = `
+Retrieve records keys associated with an ENS name.
+
+Use this tool when the user asks about:
+- All Text/Address keys associated with an ENS name, not the associated values.
+- Complete list of all records associated with an ENS name (use these values to get profile details)`;
+
+const GetSubgraphRecords = Tool.make("get_subgraph_records", {
+  description: GetSubgraphRecordsDescription,
+  failure: Schema.Never,
+  parameters: GetSubgraphRecordsParams,
+  success: GetSubgraphRecordsResponse,
+});
+
 export const EnsSubgraphActionsTools = Toolkit.make(
   GetSubnamesForName,
   GetNamesForAddress,
   GetNameHistory,
+  GetSubgraphRecords,
 );
 
 export const EnsSubgraphActionsToolsHandlers = EnsSubgraphActionsTools.toLayer(
@@ -79,6 +96,8 @@ export const EnsSubgraphActionsToolsHandlers = EnsSubgraphActionsTools.toLayer(
       get_name_history: (params) => subgraphActions.getNameHistory(params),
       get_names_for_address: (params) =>
         subgraphActions.getNamesForAddress(params),
+      get_subgraph_records: (params) =>
+        subgraphActions.getSubgraphRecords(params),
       get_subnames_for_name: (params) =>
         subgraphActions.getSubnamesForName(params),
     };

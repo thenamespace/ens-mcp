@@ -8,6 +8,8 @@ import type {
   GetNameHistoryResponse,
   GetNamesForAddressParams,
   GetNamesForAddressResponse,
+  GetSubgraphRecordsParams,
+  GetSubgraphRecordsResponse,
   GetSubnamesForNameParams,
   GetSubnamesForNameResponse,
 } from "./schema";
@@ -22,6 +24,9 @@ export type EnsSubgraphActions = {
   getNameHistory: (
     params: GetNameHistoryParams,
   ) => Effect.Effect<GetNameHistoryResponse>;
+  getSubgraphRecords: (
+    params: GetSubgraphRecordsParams,
+  ) => Effect.Effect<GetSubgraphRecordsResponse>;
 };
 
 export const EnsSubgraphActions =
@@ -46,6 +51,16 @@ export const EnsSubgraphActionsLive = Layer.effect(
             client.getNamesForAddress({ address: address as Address, ...rest }),
           );
           return { names: res.map(nameToGenericName) };
+        }),
+      getSubgraphRecords: (params) =>
+        Effect.gen(function* () {
+          const res = yield* Effect.promise(() =>
+            client.getSubgraphRecords(params),
+          );
+          return {
+            coins: (res?.coins ?? []).map((c) => Number(c)),
+            texts: res?.texts ?? [],
+          };
         }),
       getSubnamesForName: (params) =>
         Effect.gen(function* () {

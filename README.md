@@ -323,6 +323,7 @@ Once ENS MCP is installed, you can ask things like:
 | `get_names_for_address` | Retrieve names owned by an address |
 | `get_subnames_for_name` | Retrieve subnames under a given ENS name |
 | `get_name_history` | Retrieve history of an ENS name |
+| `get_subgraph_records` | Retrieve records keys associated with an ENS name |
 
 
 Built with ❤️ by Namespace 🥷
