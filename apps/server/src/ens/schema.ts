@@ -201,7 +201,7 @@ export const GenericName = Schema.Struct({
 
 export type GenericName = typeof GenericName.Type;
 
-const OrderOptions = {
+export const OrderOptions = {
   orderBy: Schema.optional(
     Schema.Literals(["expiryDate", "name", "labelName", "createdAt"]),
   ).annotate({
@@ -241,7 +241,7 @@ export const GetSubnamesForNameResponse = Schema.Struct({
 export type GetSubnamesForNameResponse = typeof GetSubnamesForNameResponse.Type;
 
 export const GetNamesForAddressParams = Schema.Struct({
-  address: Schema.TemplateLiteral(["0x", Schema.String]).annotate({
+  address: Schema.String.annotate({
     description: "Address to get names for",
   }),
   filter: Schema.optional(
@@ -273,3 +273,33 @@ export const GetNamesForAddressResponse = Schema.Struct({
 });
 
 export type GetNamesForAddressResponse = typeof GetNamesForAddressResponse.Type;
+export const GetNameHistoryParams = Schema.Struct({
+  name: Schema.String.annotate({
+    description: "ENS name to get history for",
+  }),
+});
+
+export type GetNameHistoryParams = typeof GetNameHistoryParams.Type;
+
+export const GenericEvent = Schema.Struct({
+  eventType: Schema.String.annotate({
+    description: "Type of event",
+  }),
+  txHash: Schema.String.annotate({
+    description: "Transaction hash of the event",
+  }),
+  blockNumber: Schema.Number.annotate({
+    description: "Block number of the event",
+  }),
+  data: Schema.Record(Schema.String, Schema.Any).annotate({
+    description: "Event data",
+  }),
+});
+
+export type GenericEvent = typeof GenericEvent.Type;
+
+export const GetNameHistoryResponse = Schema.Struct({
+  events: Schema.Array(GenericEvent),
+});
+
+export type GetNameHistoryResponse = typeof GetNameHistoryResponse.Type;

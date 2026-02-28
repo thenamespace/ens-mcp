@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/complexity/noForEach: safe */
+/** biome-ignore-all lint/suspicious/noExplicitAny: safe */
 import {
   batch,
   type GetContentHashRecordReturnType,
@@ -13,13 +14,19 @@ import {
   getTextRecord,
 } from "@ensdomains/ensjs/public";
 import type { Name } from "@ensdomains/ensjs/subgraph";
-import { normalise } from "@ensdomains/ensjs/utils";
+import { decodeFuses, normalise } from "@ensdomains/ensjs/utils";
 import { type Address, zeroAddress } from "viem";
 
 import { getSecondsRemaining, toLLMDate } from "@/helpers";
 
 import type { EnsClient } from "./ens-client";
-import type { EnsProfile, GenericName, GetEnsProfileParams } from "./schema";
+import type {
+  EnsProfile,
+  GenericEvent,
+  GenericName,
+  GetEnsProfileParams,
+  GetNameHistoryParams,
+} from "./schema";
 
 export const getEnsProfileInternal = async (
   client: EnsClient,
@@ -148,5 +155,122 @@ export const nameToGenericName = (name: Name): GenericName => {
     ownerAddress: name.wrappedOwner ?? name.owner,
     registration: toLLMDate(registrationDate),
     resolverAddress: name.resolvedAddress ?? zeroAddress,
+  };
+};
+
+export const getNameHistoryInternal = async (
+  client: EnsClient,
+  params: GetNameHistoryParams,
+) => {
+  const res = await client.getNameHistory(params);
+
+  const events: GenericEvent[] = [];
+
+  res?.domainEvents.forEach((e) => {
+    const commonData = {
+      blockNumber: e.blockNumber,
+      eventType: e.type,
+      txHash: e.transactionID,
+    };
+    const data: Record<string, any> = {};
+    if (e.type === "Transfer") {
+      data.owner = e.owner;
+    } else if (e.type === "NewOwner") {
+      data.owner = e.owner;
+    } else if (e.type === "NameWrapped") {
+      data.owner = e.owner;
+      data.expiryDate = e.expiryDate;
+    } else if (e.type === "NameUnwrapped") {
+      data.owner = e.owner;
+    } else if (e.type === "WrappedTransfer") {
+      data.owner = e.owner;
+    } else if (e.type === "NewResolver") {
+      data.resolver = e.resolver;
+    } else if (e.type === "NewTTL") {
+      data.ttl = e.ttl;
+    } else if (e.type === "ExpiryExtended") {
+      data.expiryDate = e.expiryDate;
+    } else {
+      const decodedFuses = decodeFuses(e.fuses);
+      const { unnamed, ...restChild } = decodedFuses.child;
+      const { unnamed: unnamedParent, ...restParent } = decodedFuses.parent;
+      data.childFuses = restChild;
+      data.parentFuses = restParent;
+    }
+
+    events.push({
+      ...commonData,
+      data,
+    });
+  });
+
+  res?.registrationEvents?.forEach((e) => {
+    const commonData = {
+      blockNumber: e.blockNumber,
+      eventType: e.type,
+      txHash: e.transactionID,
+    };
+    const data: Record<string, any> = {};
+    if (e.type === "NameRegistered") {
+      data.registrant = e.registrant;
+      data.expiryDate = e.expiryDate;
+    } else if (e.type === "NameRenewed") {
+      data.newExpiryDate = e.expiryDate;
+    } else {
+      data.newOwner = e.newOwner;
+    }
+
+    events.push({
+      ...commonData,
+      data,
+    });
+  });
+
+  res?.resolverEvents?.forEach((e) => {
+    const commonData = {
+      blockNumber: e.blockNumber,
+      eventType: e.type,
+      txHash: e.transactionID,
+    };
+    const data: Record<string, any> = {};
+    if (e.type === "AbiChanged") {
+      data.contentType = e.contentType;
+    } else if (e.type === "AddrChanged") {
+      data.addr = e.addr;
+    } else if (e.type === "AuthorisationChanged") {
+      data.isAuthorized = e.isAuthorized;
+      data.target = e.target;
+      data.owner = e.owner;
+    } else if (e.type === "ContenthashChanged") {
+      data.newContentHash = e.contentHash;
+      data.newProtocolType = e.protocolType;
+      data.newDecoded = e.decoded;
+    } else if (e.type === "InterfaceChanged") {
+      data.interfaceID = e.interfaceID;
+      data.implementer = e.implementer;
+    } else if (e.type === "MulticoinAddrChanged") {
+      data.coinType = e.coinType;
+      data.addr = e.addr;
+      data.coinName = e.coinName;
+    } else if (e.type === "NameChanged") {
+      data.name = e.name;
+    } else if (e.type === "PubkeyChanged") {
+      data.x = e.x;
+      data.y = e.y;
+    } else if (e.type === "TextChanged") {
+      data.key = e.key;
+      data.value = e.value;
+    } else {
+      data.version = e.version;
+    }
+
+    events.push({
+      ...commonData,
+      data,
+    });
+  });
+
+  return {
+    events: events.sort((a, b) => a.blockNumber - b.blockNumber),
   };
 };

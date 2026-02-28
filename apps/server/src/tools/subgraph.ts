@@ -3,6 +3,8 @@ import { Tool, Toolkit } from "effect/unstable/ai";
 
 import {
   EnsSubgraphActions,
+  GetNameHistoryParams,
+  GetNameHistoryResponse,
   GetNamesForAddressParams,
   GetNamesForAddressResponse,
   GetSubnamesForNameParams,
@@ -40,8 +42,7 @@ Use this tool when the user asks about:
 
 Supports filtering by name type, sorting, pagination, and optionally including expired or deleted names.
 
-If no filters are specified, returns active names ordered alphabetically by name.
-`;
+If no filters are specified, returns active names ordered alphabetically by name.`;
 
 const GetNamesForAddress = Tool.make("get_names_for_address", {
   description: GetNamesForAddressDescription,
@@ -50,15 +51,32 @@ const GetNamesForAddress = Tool.make("get_names_for_address", {
   success: GetNamesForAddressResponse,
 });
 
+export const GetNameHistoryDescription = `
+Retrieve history of an ENS name.
+
+Use this tool when the user asks about:
+- Events of an ENS name
+- Historical events of an ENS name, eg. transfers, registrations, expirations, text record changes, renewals, resolver changes, etc.
+`;
+
+const GetNameHistory = Tool.make("get_name_history", {
+  description: GetNameHistoryDescription,
+  failure: Schema.Never,
+  parameters: GetNameHistoryParams,
+  success: GetNameHistoryResponse,
+});
+
 export const EnsSubgraphActionsTools = Toolkit.make(
   GetSubnamesForName,
   GetNamesForAddress,
+  GetNameHistory,
 );
 
 export const EnsSubgraphActionsToolsHandlers = EnsSubgraphActionsTools.toLayer(
   Effect.gen(function* () {
     const subgraphActions = yield* EnsSubgraphActions;
     return {
+      get_name_history: (params) => subgraphActions.getNameHistory(params),
       get_names_for_address: (params) =>
         subgraphActions.getNamesForAddress(params),
       get_subnames_for_name: (params) =>

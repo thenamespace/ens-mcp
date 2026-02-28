@@ -1,8 +1,11 @@
 import { Effect, Layer, ServiceMap } from "effect";
+import type { Address } from "viem";
 
 import { EnsClient } from "./ens-client";
-import { nameToGenericName } from "./helpers";
+import { getNameHistoryInternal, nameToGenericName } from "./helpers";
 import type {
+  GetNameHistoryParams,
+  GetNameHistoryResponse,
   GetNamesForAddressParams,
   GetNamesForAddressResponse,
   GetSubnamesForNameParams,
@@ -16,6 +19,9 @@ export type EnsSubgraphActions = {
   getNamesForAddress: (
     params: GetNamesForAddressParams,
   ) => Effect.Effect<GetNamesForAddressResponse>;
+  getNameHistory: (
+    params: GetNameHistoryParams,
+  ) => Effect.Effect<GetNameHistoryResponse>;
 };
 
 export const EnsSubgraphActions =
@@ -26,19 +32,18 @@ export const EnsSubgraphActionsLive = Layer.effect(
   Effect.gen(function* () {
     const client = yield* EnsClient;
 
-    client.getNamesForAddress({
-      address: "0x0",
-      filter: {},
-      orderBy: "createdAt",
-      orderDirection: "asc",
-      pageSize: 100,
-    });
-
     return {
+      getNameHistory: (params) =>
+        Effect.gen(function* () {
+          return yield* Effect.promise(() =>
+            getNameHistoryInternal(client, params),
+          );
+        }),
       getNamesForAddress: (params) =>
         Effect.gen(function* () {
+          const { address, ...rest } = params;
           const res = yield* Effect.promise(() =>
-            client.getNamesForAddress(params),
+            client.getNamesForAddress({ address: address as Address, ...rest }),
           );
           return { names: res.map(nameToGenericName) };
         }),

@@ -1,6 +1,10 @@
-import { createEnsPublicClient } from "@ensdomains/ensjs";
+import {
+  addEnsContracts,
+  ensPublicActions,
+  ensSubgraphActions,
+} from "@ensdomains/ensjs";
 import { Effect, Layer, Option, Redacted, ServiceMap } from "effect";
-import { http } from "viem";
+import { createClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
 import { EnsClientConfig } from "@/config";
@@ -12,10 +16,23 @@ const makeEnsClient = Effect.gen(function* () {
     ? Redacted.value(config.rpcUrl.value)
     : undefined;
 
-  return createEnsPublicClient({
-    chain: mainnet,
+  const chain = {
+    ...addEnsContracts(mainnet),
+    subgraphs: {
+      ens: {
+        url: "https://api.alpha.ensnode.io/subgraph",
+      },
+    },
+  };
+
+  const client = createClient({
+    chain,
     transport: http(url),
-  });
+  })
+    .extend(ensSubgraphActions)
+    .extend(ensPublicActions);
+
+  return client;
 });
 
 export type EnsClient = Effect.Success<typeof makeEnsClient>;
