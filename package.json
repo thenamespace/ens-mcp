@@ -1,7 +1,7 @@
 {
   "author": "Vedant Chainani <vedant@envoy1084.xyz>",
   "bugs": {
-    "url": "https://github.com/envoy1084/ens-mpc/issues"
+    "url": "https://github.com/thenamespace/ens-mcp/issues"
   },
   "description": "",
   "devDependencies": {
@@ -16,7 +16,7 @@
   "engines": {
     "node": ">=18"
   },
-  "homepage": "https://github.com/envoy1084/ens-mpc#readme",
+  "homepage": "https://github.com/thenamespace/ens-mcp#readme",
   "keywords": [],
   "license": "MIT",
   "name": "ens-mpc-server",
@@ -24,7 +24,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/envoy1084/ens-mpc.git"
+    "url": "git+https://github.com/thenamespace/ens-mcp.git"
   },
   "scripts": {
     "build": "turbo build",
