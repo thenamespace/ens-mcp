@@ -298,6 +298,18 @@ Once ENS MCP is installed, you can ask things like:
 7️⃣ Conditional Acquisition Strategy
 
 > I want to get example.eth. How much does it cost for 2 years? And if it’s not available, give me the owner details and socials so I can contact them.
+
+8️⃣ Names for Address
+
+> What are the names owned by 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?
+
+9️⃣ Subnames for Name
+
+> What are the subnames under vitalik.eth?
+
+1️⃣0️⃣ Name History
+
+> when was the last time vitalik.eth changed its content hash?
 ```
 
 ## Available Tools
@@ -307,6 +319,9 @@ Once ENS MCP is installed, you can ask things like:
 | `is_name_available` | Check if an ENS name is available for registration |
 | `get_name_price` | Get the price of an ENS name for a given duration |
 | `get_profile_details` | Fetch detailed ENS profile information including ownership, resolver, expiry status, text records, address records, and content hash |
+| `get_names_for_address` | Retrieve names owned by an address |
+| `get_subnames_for_name` | Retrieve subnames under a given ENS name |
+| `get_name_history` | Retrieve history of an ENS name |
 
 
 Built with ❤️ by Namespace 🥷
