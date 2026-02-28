@@ -201,6 +201,20 @@ export const GenericName = Schema.Struct({
 
 export type GenericName = typeof GenericName.Type;
 
+const OrderOptions = {
+  orderBy: Schema.optional(
+    Schema.Literals(["expiryDate", "name", "labelName", "createdAt"]),
+  ).annotate({
+    description: "Parameter to order names by (default: name)",
+  }),
+  orderDirection: Schema.optional(Schema.Literals(["asc", "desc"])).annotate({
+    description: "Direction to order names in (default: asc)",
+  }),
+  pageSize: Schema.optional(Schema.Number).annotate({
+    description: "Page size (default: 100)",
+  }),
+};
+
 export const GetSubnamesForNameParams = Schema.Struct({
   name: Schema.String.annotate({
     description: "Name to get subnames for",
@@ -215,21 +229,8 @@ export const GetSubnamesForNameParams = Schema.Struct({
   allowDeleted: Schema.optional(Schema.Boolean).annotate({
     description: "Include deleted subnames in the results. Defaults to false.",
   }),
-  orderBy: Schema.optional(
-    Schema.Literals(["expiryDate", "name", "labelName", "createdAt"]),
-  ).annotate({
-    description: "Parameter to order names by (default: name)",
-  }),
-  orderDirection: Schema.optional(Schema.Literals(["asc", "desc"])).annotate({
-    description: "Direction to order names in (default: asc)",
-  }),
-  // TODO: This seems too much, should switch to cursor based pagination
-  // previousPage: Schema.UndefinedOr(Schema.Array(GenericName)).annotate({
-  //   description: "Previous page of subnames, used for pagination",
-  // }),
-  pageSize: Schema.optional(Schema.Number).annotate({
-    description: "Page size (default: 100)",
-  }),
+  // TODO: See how to add pagination, current ensjs uses prevNames, which is not ideal
+  ...OrderOptions,
 });
 
 export type GetSubnamesForNameParams = typeof GetSubnamesForNameParams.Type;
@@ -238,3 +239,37 @@ export const GetSubnamesForNameResponse = Schema.Struct({
   subnames: Schema.Array(GenericName),
 });
 export type GetSubnamesForNameResponse = typeof GetSubnamesForNameResponse.Type;
+
+export const GetNamesForAddressParams = Schema.Struct({
+  address: Schema.TemplateLiteral(["0x", Schema.String]).annotate({
+    description: "Address to get names for",
+  }),
+  filter: Schema.optional(
+    Schema.Struct({
+      searchString: Schema.optional(Schema.String).annotate({
+        description: "Filter names by substring match. Case-insensitive.",
+      }),
+      searchType: Schema.optional(
+        Schema.Literals(["labelName", "name"]),
+      ).annotate({
+        description: "Search names by type (default: name)",
+      }),
+      allowExpired: Schema.optional(Schema.Boolean).annotate({
+        description:
+          "Include expired names in the results. Defaults to false (only active names returned).",
+      }),
+      allowDeleted: Schema.optional(Schema.Boolean).annotate({
+        description: "Include deleted names in the results. Defaults to false.",
+      }),
+    }),
+  ),
+  ...OrderOptions,
+});
+
+export type GetNamesForAddressParams = typeof GetNamesForAddressParams.Type;
+
+export const GetNamesForAddressResponse = Schema.Struct({
+  names: Schema.Array(GenericName),
+});
+
+export type GetNamesForAddressResponse = typeof GetNamesForAddressResponse.Type;
