@@ -1,4 +1,4 @@
-import { Effect, Layer } from "effect";
+import { Layer } from "effect";
 import { McpServer } from "effect/unstable/ai";
 
 import { EnsLive } from "./ens";
