@@ -6,6 +6,7 @@
   "description": "",
   "devDependencies": {
     "@biomejs/biome": "2.4.4",
+    "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
     "@repo/config": "workspace:*",
@@ -35,7 +36,8 @@
     "lint": "pnpm exec biome check --write",
     "lint:check": "pnpm exec biome check",
     "lint:write": "turbo lint:write",
-    "prepare": "if [ \"$SKIP_LEFTHOOK\" = \"true\" ] || [ \"$CI\" = \"true\" ]; then echo 'Skipping lefthook'; else lefthook install; fi"
+    "prepare": "if [ \"$SKIP_LEFTHOOK\" = \"true\" ] || [ \"$CI\" = \"true\" ]; then echo 'Skipping lefthook'; else lefthook install; fi",
+    "release": "pnpm build && changeset publish"
   },
   "version": "1.0.0"
 }

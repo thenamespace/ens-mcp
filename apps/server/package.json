@@ -21,19 +21,31 @@
     "typescript": "^5.9.3"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "homepage": "https://github.com/thenamespace/ens-mcp#readme",
-  "keywords": [],
+  "keywords": [
+    "ens",
+    "ethereum",
+    "name-service",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "cli",
+    "web3"
+  ],
   "license": "MIT",
   "name": "ens-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thenamespace/ens-mcp"
+    "url": "git+https://github.com/thenamespace/ens-mcp.git"
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "bun --watch run src/cli.ts"
+    "dev": "bun --watch run src/cli.ts",
+    "postpack": "rm -rf README.md",
+    "prepack": "cp ../../README.md ."
   },
   "sideEffects": false,
   "type": "module",

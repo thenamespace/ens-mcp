@@ -8,5 +8,5 @@
   },
   "exclude": ["node_modules", "dist"],
   "extends": "@repo/config/tsconfig/library/node",
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "scripts/prepack.mjs"]
 }
