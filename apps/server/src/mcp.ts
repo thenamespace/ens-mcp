@@ -1,4 +1,4 @@
-import { Layer } from "effect";
+import { Effect, Layer } from "effect";
 import { McpServer } from "effect/unstable/ai";
 
 import { EnsLive } from "./ens";
@@ -9,7 +9,9 @@ import {
   EnsSubgraphActionsToolsHandlers,
 } from "./tools";
 
-export const McpLive = McpServer.toolkit(EnsPublicActionsTools).pipe(
+export const McpLive = Layer.effectDiscard(
+  McpServer.registerToolkit(EnsPublicActionsTools),
+).pipe(
   Layer.provideMerge(
     Layer.effectDiscard(McpServer.registerToolkit(EnsSubgraphActionsTools)),
   ),

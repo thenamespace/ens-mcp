@@ -15,6 +15,7 @@ import {
 } from "@ensdomains/ensjs/public";
 import type { Name } from "@ensdomains/ensjs/subgraph";
 import { decodeFuses, normalise } from "@ensdomains/ensjs/utils";
+import type { MutableJson } from "effect/Schema";
 import { type Address, zeroAddress } from "viem";
 
 import { getSecondsRemaining, toLLMDate } from "@/helpers";
@@ -172,7 +173,7 @@ export const getNameHistoryInternal = async (
       eventType: e.type,
       txHash: e.transactionID,
     };
-    const data: Record<string, any> = {};
+    const data: MutableJson = {};
     if (e.type === "Transfer") {
       data.owner = e.owner;
     } else if (e.type === "NewOwner") {
@@ -210,7 +211,7 @@ export const getNameHistoryInternal = async (
       eventType: e.type,
       txHash: e.transactionID,
     };
-    const data: Record<string, any> = {};
+    const data: MutableJson = {};
     if (e.type === "NameRegistered") {
       data.registrant = e.registrant;
       data.expiryDate = e.expiryDate;
@@ -232,7 +233,7 @@ export const getNameHistoryInternal = async (
       eventType: e.type,
       txHash: e.transactionID,
     };
-    const data: Record<string, any> = {};
+    const data: MutableJson = {};
     if (e.type === "AbiChanged") {
       data.contentType = e.contentType;
     } else if (e.type === "AddrChanged") {
@@ -259,7 +260,7 @@ export const getNameHistoryInternal = async (
       data.y = e.y;
     } else if (e.type === "TextChanged") {
       data.key = e.key;
-      data.value = e.value;
+      data.value = e.value ?? null;
     } else {
       data.version = e.version;
     }

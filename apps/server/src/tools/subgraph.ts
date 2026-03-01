@@ -92,6 +92,7 @@ export const EnsSubgraphActionsTools = Toolkit.make(
 export const EnsSubgraphActionsToolsHandlers = EnsSubgraphActionsTools.toLayer(
   Effect.gen(function* () {
     const subgraphActions = yield* EnsSubgraphActions;
+
     return {
       get_name_history: (params) => subgraphActions.getNameHistory(params),
       get_names_for_address: (params) =>

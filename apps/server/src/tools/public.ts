@@ -2,6 +2,7 @@ import { Effect, Schema } from "effect";
 import { Tool, Toolkit } from "effect/unstable/ai";
 
 import {
+  EnsProfile,
   EnsPublicActions,
   FormattedNamePrice,
   GetEnsProfileParams,
@@ -61,7 +62,7 @@ const GetProfileDetails = Tool.make("get_profile_details", {
   description: GetEnsProfileDescription,
   failure: Schema.Never,
   parameters: GetEnsProfileParams,
-  success: Schema.Any,
+  success: EnsProfile,
 });
 
 export const EnsPublicActionsTools = Toolkit.make(
@@ -73,6 +74,7 @@ export const EnsPublicActionsTools = Toolkit.make(
 export const EnsPublicActionsToolsHandlers = EnsPublicActionsTools.toLayer(
   Effect.gen(function* () {
     const publicActions = yield* EnsPublicActions;
+
     return {
       get_name_price: ({ duration, name }) =>
         publicActions.getPrice(name, duration),
