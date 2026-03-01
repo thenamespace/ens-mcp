@@ -29,7 +29,6 @@ const makeRateLimiter = Effect.gen(function* () {
 
 export const RateLimitMiddleware = HttpRouter.middleware()(
   Effect.gen(function* () {
-    yield* Effect.log("RateLimitMiddleware initialized");
     return (httpEffect) =>
       Effect.gen(function* () {
         const limiter = yield* makeRateLimiter;
