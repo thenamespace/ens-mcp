@@ -2,13 +2,11 @@
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "ens": {
+      "command": ["npx", "-y", "ens-mcp"],
       "enabled": true,
-      "type": "remote",
-      "url": "http://localhost:3000/mcp"
-    },
-    "justaname-ens": {
-      "command": ["npx", "-y", "mcp-server-ens"],
-      "enabled": false,
+      "environment": {
+        "RPC_URL": "{env:RPC_URL}"
+      },
       "type": "local"
     }
   }
