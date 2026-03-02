@@ -16,8 +16,6 @@ const makeRateLimiter = Effect.gen(function* () {
   const makeLimiter = yield* RateLimiter.makeWithRateLimiter;
   const clientIp = yield* getClientIp;
 
-  console.log("RateLimitMiddleware: clientIp", clientIp);
-
   return makeLimiter({
     algorithm: "fixed-window",
     key: clientIp,
