@@ -15,6 +15,7 @@
   "license": "MIT",
   "main": "src/index.ts",
   "name": "@repo/package-template",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/thenamespace/ens-mcp"

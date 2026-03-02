@@ -29,6 +29,7 @@
   ],
   "license": "MIT",
   "name": "@repo/config",
+  "private": true,
   "type": "module",
   "version": "0.0.1"
 }
