@@ -21,6 +21,7 @@ import { type Address, zeroAddress } from "viem";
 import { getSecondsRemaining, toLLMDate } from "@/helpers";
 
 import type { EnsClient } from "./ens-client";
+import { getNameHistory } from "./get-name-history";
 import type {
   EnsProfile,
   GenericEvent,
@@ -159,11 +160,15 @@ export const nameToGenericName = (name: Name): GenericName => {
   };
 };
 
+const subgraphDateToLlmDate = (date: string) => {
+  return toLLMDate(new Date(Number(date) * 1000));
+};
+
 export const getNameHistoryInternal = async (
   client: EnsClient,
   params: GetNameHistoryParams,
 ) => {
-  const res = await client.getNameHistory(params);
+  const res = await getNameHistory(client, params);
 
   const events: GenericEvent[] = [];
 
@@ -180,17 +185,22 @@ export const getNameHistoryInternal = async (
       data.owner = e.owner;
     } else if (e.type === "NameWrapped") {
       data.owner = e.owner;
-      data.expiryDate = e.expiryDate;
+      const llmDate = subgraphDateToLlmDate(e.expiryDate);
+      data.isoDate = llmDate.isoDate;
+      data.timestamp = llmDate.timestamp;
     } else if (e.type === "NameUnwrapped") {
       data.owner = e.owner;
     } else if (e.type === "WrappedTransfer") {
       data.owner = e.owner;
     } else if (e.type === "NewResolver") {
+      // TODO: Inspect getting "1" as e.resolver
       data.resolver = e.resolver;
     } else if (e.type === "NewTTL") {
       data.ttl = e.ttl;
     } else if (e.type === "ExpiryExtended") {
-      data.expiryDate = e.expiryDate;
+      const llmDate = subgraphDateToLlmDate(e.expiryDate);
+      data.isoDate = llmDate.isoDate;
+      data.timestamp = llmDate.timestamp;
     } else {
       const decodedFuses = decodeFuses(e.fuses);
       const { unnamed, ...restChild } = decodedFuses.child;
@@ -214,9 +224,13 @@ export const getNameHistoryInternal = async (
     const data: MutableJson = {};
     if (e.type === "NameRegistered") {
       data.registrant = e.registrant;
-      data.expiryDate = e.expiryDate;
+      const llmDate = subgraphDateToLlmDate(e.expiryDate);
+      data.isoDate = llmDate.isoDate;
+      data.timestamp = llmDate.timestamp;
     } else if (e.type === "NameRenewed") {
-      data.newExpiryDate = e.expiryDate;
+      const llmDate = subgraphDateToLlmDate(e.expiryDate);
+      data.isoDate = llmDate.isoDate;
+      data.timestamp = llmDate.timestamp;
     } else {
       data.newOwner = e.newOwner;
     }
@@ -243,9 +257,9 @@ export const getNameHistoryInternal = async (
       data.target = e.target;
       data.owner = e.owner;
     } else if (e.type === "ContenthashChanged") {
-      data.newContentHash = e.contentHash;
-      data.newProtocolType = e.protocolType;
-      data.newDecoded = e.decoded;
+      data.contentHash = e.contentHash;
+      data.protocolType = e.protocolType;
+      data.decoded = e.decoded;
     } else if (e.type === "InterfaceChanged") {
       data.interfaceID = e.interfaceID;
       data.implementer = e.implementer;

@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 
 import { NodeHttpServer, NodeStdio } from "@effect/platform-node";
-import { Layer, Logger } from "effect";
+import { Effect, Layer, Logger } from "effect";
 import { McpServer } from "effect/unstable/ai";
 import { HttpRouter } from "effect/unstable/http";
 import { RateLimiter } from "effect/unstable/persistence";
@@ -31,8 +31,6 @@ const McpRouter = McpLive.pipe(
       version: "0.0.1",
     }),
   ),
-  Layer.provideMerge(RateLimiter.layer),
-  Layer.provideMerge(RateLimiter.layerStoreMemory),
   Layer.provideMerge(RateLimitMiddleware),
   Layer.provideMerge(
     HttpRouter.cors({
@@ -49,4 +47,7 @@ export const startHttpServer = (port: number) =>
     HttpRouter.serve(McpRouter).pipe(
       Layer.provideMerge(NodeHttpServer.layer(createServer, { port })),
     ),
+  ).pipe(
+    Effect.provide(RateLimiter.layer),
+    Effect.provide(RateLimiter.layerStoreMemory),
   );
