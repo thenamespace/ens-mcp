@@ -326,4 +326,4 @@ Once ENS MCP is installed, you can ask things like:
 | `get_subgraph_records` | Retrieve records keys associated with an ENS name |
 
 
-Built with ❤️ by Namespace 🥷
+Built with ❤️ by [Namespace](https://namespace.ninja/) Ninjas 🥷
