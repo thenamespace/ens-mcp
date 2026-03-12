@@ -4,7 +4,7 @@
 [![Install in VS Code](https://img.shields.io/badge/Install_in-VS_Code-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=ens-mcp&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fens-mcp.namespace.ninja%2Fmcp%22%7D)
 [![npm version](https://badge.fury.io/js/ens-mcp.svg)](https://www.npmjs.com/package/ens-mcp)
 
-Connect AI assistants to ENS (Ethereum Name Service) for name lookups, profile information, availability checks, and pricing.
+Give your AI assistant native access to the ENS (Ethereum Name Service). Look up ENS names, profile information, check name availability, get pricing, explore subnames, and query onchain records — all through natural language.
 
 ## Installation
 
@@ -317,13 +317,18 @@ Once ENS MCP is installed, you can ask things like:
 
 | Tool | Description |
 | ---- | ----------- |
-| `is_name_available` | Check if an ENS name is available for registration |
-| `get_name_price` | Get the price of an ENS name for a given duration |
-| `get_profile_details` | Fetch detailed ENS profile information including ownership, resolver, expiry status, text records, address records, and content hash |
-| `get_names_for_address` | Retrieve names owned by an address |
-| `get_subnames_for_name` | Retrieve subnames under a given ENS name |
-| `get_name_history` | Retrieve history of an ENS name |
-| `get_subgraph_records` | Retrieve records keys associated with an ENS name |
+| `is_name_available` | Check whether an ENS name is currently available for registration |
+| `get_name_price` | Get the registration price for a name at a given duration (in seconds) |
+| `get_profile_details` | Fetch full ENS profile: owner, resolver, expiry, text records, address records, and contenthash |
+| `get_names_for_address` | List all ENS names held by a given address |
+| `get_subnames_for_name` | Retrieve all subdomains registered under a parent ENS name |
+| `get_name_history` | Retrieve the event history of any ENS name |
+| `get_subgraph_records` | Query all record keys associated with a name |
 
+## Contributing
+
+Contributions are welcome. Feel free to open a PR.
+
+---
 
 Built with ❤️ by [Namespace](https://namespace.ninja/) Ninjas 🥷
