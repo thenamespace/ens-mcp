@@ -1,4 +1,4 @@
-import { Duration, Effect, Layer, ServiceMap } from "effect";
+import { Context, Duration, Effect, Layer } from "effect";
 
 import { humanizeWeiUnits, parseDuration } from "@/helpers";
 
@@ -20,7 +20,7 @@ export type EnsPublicActions = {
 };
 
 export const EnsPublicActions =
-  ServiceMap.Service<EnsPublicActions>("EnsPublicActions");
+  Context.Service<EnsPublicActions>("EnsPublicActions");
 
 export const EnsPublicActionsLive = Layer.effect(
   EnsPublicActions,

@@ -3,7 +3,7 @@ import {
   ensPublicActions,
   ensSubgraphActions,
 } from "@ensdomains/ensjs";
-import { Effect, Layer, Option, Redacted, ServiceMap } from "effect";
+import { Context, Effect, Layer, Option, Redacted } from "effect";
 import { createClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
@@ -41,6 +41,6 @@ const makeEnsClient = Effect.gen(function* () {
 
 export type EnsClient = Effect.Success<typeof makeEnsClient>;
 
-export const EnsClient = ServiceMap.Service<EnsClient>("EnsClient");
+export const EnsClient = Context.Service<EnsClient>("EnsClient");
 
 export const EnsClientLive = Layer.effect(EnsClient, makeEnsClient);

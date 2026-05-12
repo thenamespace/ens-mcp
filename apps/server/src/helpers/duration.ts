@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: safe */
-import { Duration } from "effect";
+import { Duration, Option } from "effect";
 
 export const parseDuration = (
   duration: string,
   defaultDuration?: Duration.Input,
-) => {
+): Duration.Duration => {
   let safeDuration = duration;
 
   if (duration.includes("year")) {
@@ -17,8 +17,10 @@ export const parseDuration = (
     safeDuration = `${Number(amount) * 30} days`;
   }
 
-  return (
-    Duration.fromInput(safeDuration as any) ??
-    Duration.fromInputUnsafe(defaultDuration ?? "365 days")
-  );
+  const safeDurationOption = Duration.fromInput(safeDuration as any);
+
+  if (Option.isSome(safeDurationOption)) {
+    return safeDurationOption.value;
+  }
+  return Duration.fromInputUnsafe(defaultDuration ?? "365 days");
 };

@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import {
   HttpRouter,
   HttpServerRequest,
@@ -18,7 +18,12 @@ const makeRateLimiter = Effect.gen(function* () {
 
   return makeLimiter({
     algorithm: "fixed-window",
-    key: clientIp,
+    key: Option.isOption(clientIp)
+      ? // biome-ignore lint/style/noNestedTernary: safe
+        Option.isSome(clientIp)
+        ? clientIp.value
+        : "unknown"
+      : clientIp,
     limit: 100,
     onExceeded: "fail",
     window: "1 minute",

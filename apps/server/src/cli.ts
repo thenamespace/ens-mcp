@@ -1,10 +1,4 @@
-import {
-  NodeChildProcessSpawner,
-  NodeFileSystem,
-  NodePath,
-  NodeRuntime,
-  NodeTerminal,
-} from "@effect/platform-node";
+import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { Console, Effect } from "effect";
 import { Command, Flag } from "effect/unstable/cli";
 
@@ -36,10 +30,7 @@ const cli = Command.run(command, {
 });
 
 cli.pipe(
-  Effect.provide(NodeTerminal.layer),
-  Effect.provide(NodeChildProcessSpawner.layer),
-  Effect.provide(NodePath.layer),
-  Effect.provide(NodeFileSystem.layer),
+  Effect.provide(NodeServices.layer),
   Effect.scoped,
   NodeRuntime.runMain,
 );

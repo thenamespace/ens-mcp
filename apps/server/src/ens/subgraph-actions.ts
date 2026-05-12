@@ -1,4 +1,4 @@
-import { Effect, Layer, ServiceMap } from "effect";
+import { Context, Effect, Layer } from "effect";
 import type { Address } from "viem";
 
 import { EnsClient } from "./ens-client";
@@ -30,7 +30,7 @@ export type EnsSubgraphActions = {
 };
 
 export const EnsSubgraphActions =
-  ServiceMap.Service<EnsSubgraphActions>("EnsSubgraphActions");
+  Context.Service<EnsSubgraphActions>("EnsSubgraphActions");
 
 export const EnsSubgraphActionsLive = Layer.effect(
   EnsSubgraphActions,
