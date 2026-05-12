@@ -17,5 +17,7 @@ jobs:
             workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
     update-prod:
         needs: build-and-push
-        uses: thenamespace/.github/.github/workflows/gh-update-stg-image-tag.yaml@main
+        uses: ./.github/workflows/dispatch.yml
         secrets: inherit
+        with:
+            environment: prod
