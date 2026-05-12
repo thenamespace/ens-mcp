@@ -19,5 +19,3 @@ jobs:
         needs: build-and-push
         uses: thenamespace/.github/.github/workflows/gh-update-stg-image-tag.yaml@main
         secrets: inherit
-        with:
-            environment: prod
