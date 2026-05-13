@@ -13,6 +13,11 @@ import { RateLimiter } from "effect/unstable/persistence";
 import { RateLimitMiddleware } from "./helpers";
 import { McpLive } from "./mcp";
 
+const methodNotAllowed = HttpServerResponse.empty({
+  headers: { allow: "POST, OPTIONS" },
+  status: 405,
+});
+
 export const startStdioServer = () =>
   Layer.launch(
     McpLive.pipe(
@@ -28,6 +33,7 @@ export const startStdioServer = () =>
   );
 
 const McpRouter = McpLive.pipe(
+  Layer.provideMerge(HttpRouter.add("GET", "/mcp", methodNotAllowed)),
   Layer.provideMerge(
     McpServer.layerHttp({
       name: "ENS MCP Server",
@@ -41,6 +47,8 @@ const McpRouter = McpLive.pipe(
         Effect.gen(function* () {
           const request = yield* HttpServerRequest.HttpServerRequest;
           const response = yield* httpEffect;
+          const isMcpEndpoint = request.url.split("?")[0] === "/mcp";
+
           const body = response.body as {
             _tag: string;
             contentLength?: number;
@@ -48,7 +56,7 @@ const McpRouter = McpLive.pipe(
 
           if (
             request.method === "POST" &&
-            request.url === "/mcp" &&
+            isMcpEndpoint &&
             response.status === 200 &&
             (body._tag === "Empty" ||
               body._tag === "Stream" ||
