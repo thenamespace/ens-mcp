@@ -10,7 +10,7 @@ export const registryName = "io.github.thenamespace/ens-mcp";
 
 /**
  * Where clients reach `/mcp` on this host. Behind proxies (`proxyHops` > 0) the scheme the client
- * used is the last `X-Forwarded-Proto` entry; Cloud Run itself speaks plain HTTP to the container.
+ * used is the last `X-Forwarded-Proto` entry; the proxy speaks plain HTTP to the server.
  */
 const endpointUrl = (request: HttpServerRequest.HttpServerRequest, proxyHops: number) => {
   const forwardedProto = Option.filter(

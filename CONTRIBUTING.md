@@ -113,18 +113,22 @@ repository secrets `WORKLOAD_IDENTITY_PROVIDER` and `REPOSITORY_DISPATCH_PAT`.
 ### Hosted server
 
 The image is the hosted server's configuration: the `Dockerfile` command sets the toolsets, the
-Namespace RPC proxy, any origin, 60 requests per minute per IP and one proxy hop. The Cloud Run
-service needs no environment variables (it injects `PORT`); in `thenamespace/infra` it runs with:
+Namespace RPC proxy, any origin, 60 requests per minute per IP, one proxy hop and `--log-level warn`. It runs on the
+production GKE cluster from `applications/apps/core/ens-mcp` in `thenamespace/infra` (the shared
+`thenamespace/helm` chart, behind Traefik), which needs no environment variables, only:
 
-- minimum 0 instances, so it scales to zero, and a small maximum;
-- concurrency 80, CPU boost on start and a request timeout of at least 300 s;
-- session affinity, so 2025-11-25 clients keep their session on one instance (one that lands
-  elsewhere gets 404 and initialises again; 2026-07-28 clients have no session);
-- unauthenticated invocations, behind `ens-mcp.namespace.ninja`.
+- `ports.port: 8080`, the port the image listens on;
+- readiness and liveness probes on `GET /healthz`;
+- a memory request of at least 256 Mi (the server idles near 190 Mi).
 
-The rate limit is per instance and keyed on the `X-Forwarded-For` entry Cloud Run appends. Behind
-an external load balancer, which appends one more, raise `--proxy-hops` to 2. After a deploy, check
-that two requests from different networks are limited separately.
+Keep one replica. 2025-11-25 sessions and the rate limit live in each pod's memory: with more
+replicas, a client whose request lands on another pod gets 404 and initialises again
+(2026-07-28 clients have no session), and each pod counts its own limit.
+
+Traefik receives the client's address (its service uses `externalTrafficPolicy: Local`), replaces
+any `X-Forwarded-For` the client sent, and sets it to that address: one hop. If a proxy is ever put
+in front of Traefik (for example Cloudflare proxying), raise `--proxy-hops` to match. After a
+deploy, check that two requests from different networks are limited separately.
 
 ## Changesets
 

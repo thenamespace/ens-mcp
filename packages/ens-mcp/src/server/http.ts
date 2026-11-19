@@ -124,6 +124,7 @@ export const HttpApp = (options: HttpOptions) => {
 export const HttpServer = (
   options: HttpOptions & { readonly host: string; readonly port: number },
 ) =>
-  HttpRouter.serve(HttpApp(options)).pipe(
+  // No log line per request: the ingress already logs requests, and tool arguments stay out of logs.
+  HttpRouter.serve(HttpApp(options), { disableLogger: true }).pipe(
     Layer.provide(NodeHttpServer.layer(createServer, { host: options.host, port: options.port })),
   );
