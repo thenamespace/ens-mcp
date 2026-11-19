@@ -7,6 +7,7 @@ import { McpServer } from "effect/ai";
 import { HttpRouter, HttpServerResponse } from "effect/http";
 
 import { PackageInfo } from "../PackageInfo.js";
+import type { Toolset } from "../Toolset.js";
 import { serverOptions } from "./options.js";
 import { registrations } from "./registrations.js";
 
@@ -19,6 +20,7 @@ export const HttpServer = (options: {
   readonly port: number;
   /** Browser origins allowed to call `/mcp`; requests without an `Origin` header are always allowed. */
   readonly allowedOrigins: ReadonlyArray<string>;
+  readonly toolsets: ReadonlyArray<Toolset>;
 }) => {
   const Mcp = Layer.unwrap(
     Effect.gen(function* () {
@@ -27,7 +29,7 @@ export const HttpServer = (options: {
         ...serverOptions(version),
         path: "/mcp",
         allowedOrigins: options.allowedOrigins,
-        registrations,
+        registrations: registrations(options.toolsets),
       });
     }),
   );

@@ -5,6 +5,7 @@ import { Chain } from "./ens/Chain.js";
 import { Ens } from "./ens/Ens.js";
 import { HttpServer } from "./server/http.js";
 import { StdioServer } from "./server/stdio.js";
+import { defaultToolsets, Toolsets } from "./Toolset.js";
 
 const http = Flag.Boolean("http").pipe(
   Flag.withDefault(false),
@@ -58,6 +59,16 @@ const indexer = Flag.Literals("indexer", ["bigname", "none"]).pipe(
   ),
 );
 
+const toolsets = Flag.String("toolsets").pipe(
+  Flag.withSchema(Toolsets),
+  Flag.withFallbackConfig(Config.schema(Toolsets, "ENS_MCP_TOOLSETS")),
+  Flag.withDefault(defaultToolsets),
+  Flag.withDescription(
+    "Comma-separated toolsets to enable: lookup, lists, register, manage, advanced, utils, or all " +
+      "(env: ENS_MCP_TOOLSETS). Default: lookup,lists,register,utils",
+  ),
+);
+
 const flags = {
   http,
   host,
@@ -67,12 +78,13 @@ const flags = {
   rpcUrl,
   requireRpc,
   indexer,
+  toolsets,
 };
 
 /** `ens-mcp`: runs the ENS MCP server over stdio, or over HTTP with `--http`. */
 export const cli = Command.make("ens-mcp", flags, (options) =>
   Layer.launch(
-    (options.http ? HttpServer(options) : StdioServer).pipe(
+    (options.http ? HttpServer(options) : StdioServer(options)).pipe(
       Layer.provide(
         Ens.layer({
           chain: options.chain,

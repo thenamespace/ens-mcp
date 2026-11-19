@@ -3,13 +3,18 @@ import { Effect, Layer } from "effect";
 import { McpServer } from "effect/ai";
 
 import { PackageInfo } from "../PackageInfo.js";
+import type { Toolset } from "../Toolset.js";
 import { serverOptions } from "./options.js";
 import { registrations } from "./registrations.js";
 
 /** Serves MCP over stdin and stdout, the way local clients launch the server. */
-export const StdioServer = Layer.unwrap(
-  Effect.gen(function* () {
-    const { version } = yield* PackageInfo;
-    return McpServer.layerStdio({ ...serverOptions(version), registrations });
-  }),
-).pipe(Layer.provide(NodeStdio.layer));
+export const StdioServer = (options: { readonly toolsets: ReadonlyArray<Toolset> }) =>
+  Layer.unwrap(
+    Effect.gen(function* () {
+      const { version } = yield* PackageInfo;
+      return McpServer.layerStdio({
+        ...serverOptions(version),
+        registrations: registrations(options.toolsets),
+      });
+    }),
+  ).pipe(Layer.provide(NodeStdio.layer));
