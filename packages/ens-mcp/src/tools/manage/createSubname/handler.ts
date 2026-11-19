@@ -8,6 +8,7 @@ import type { EnsToolError } from "../../../ens/errors.js";
 import { prepareWrite } from "../../../ens/prepare.js";
 import type { PreparedWrite } from "../../../schemas/PreparedWrite.js";
 import { toRecordOptions } from "../../../schemas/Records.js";
+import { toUnixSeconds } from "../../../schemas/Timestamp.js";
 import type { CreateSubname } from "./tool.js";
 
 const resolverOption = (resolver: typeof CreateSubname.parametersSchema.Type.resolver) => {
@@ -39,9 +40,7 @@ export const createSubname = (ens: Ens["Service"]) =>
         ...(owner === undefined ? {} : { owner }),
         ...resolverOption(params.resolver),
         ...(params.records === undefined ? {} : { records: toRecordOptions(params.records) }),
-        ...(params.expiry === undefined
-          ? {}
-          : { expiry: BigInt(Math.floor(params.expiry.getTime() / 1000)) }),
+        ...(params.expiry === undefined ? {} : { expiry: toUnixSeconds(params.expiry) }),
         ...(params.fuses === undefined ? {} : { fuses: params.fuses }),
         ...(params.roles === undefined ? {} : { roles: params.roles }),
       },

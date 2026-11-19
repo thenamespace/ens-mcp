@@ -7,6 +7,7 @@ import type { Ens } from "../../../ens/Ens.js";
 import type { EnsToolError } from "../../../ens/errors.js";
 import { prepareWrite } from "../../../ens/prepare.js";
 import type { PreparedWrite } from "../../../schemas/PreparedWrite.js";
+import { toUnixSeconds } from "../../../schemas/Timestamp.js";
 import type { UpdateSubname } from "./tool.js";
 
 /** Handles `update_subname`. */
@@ -27,9 +28,7 @@ export const updateSubname = (ens: Ens["Service"]) =>
         ...(params.resolver === undefined
           ? {}
           : { resolver: params.resolver === "none" ? null : params.resolver }),
-        ...(params.expiry === undefined
-          ? {}
-          : { expiry: BigInt(Math.floor(params.expiry.getTime() / 1000)) }),
+        ...(params.expiry === undefined ? {} : { expiry: toUnixSeconds(params.expiry) }),
       },
       `Update ${params.name}, signed by ${account}.`,
     );
