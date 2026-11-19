@@ -61,8 +61,8 @@ to `/mcp`, counting IPv6 clients per /64. Over the limit the server answers 429 
 session stays in memory. Each server process counts on its own.
 
 **Behind a proxy.** Set `--proxy-hops` to the number of `X-Forwarded-For` entries your proxies
-append, so limits count per client rather than per proxy: `1` behind one proxy such as Cloud Run,
-`2` with a load balancer in front of it. Entries the client sent itself are never trusted.
+append, so limits count per client rather than per proxy: `1` behind one reverse proxy such as
+Traefik or nginx, `2` with a load balancer in front of it. Entries the client sent itself are never trusted.
 
 ## Docker
 
@@ -77,12 +77,12 @@ docker run -p 8080:8080 ens-mcp node dist/bin.js --http --rpc-url https://your-r
 
 ## The hosted server
 
-`https://ens-mcp.namespace.ninja/mcp` runs that image on Google Cloud Run, reading mainnet through
+`https://ens-mcp.namespace.ninja/mcp` runs that image on Google Kubernetes Engine behind Traefik, reading mainnet through
 the Namespace RPC with the `lookup`, `lists`, `register`, `manage` and `utils` toolsets.
 
 - **What it sees:** the requests your assistant sends, which include the names and addresses you
   ask about.
-- **What it keeps:** a log line per HTTP request (method, path, status) and Cloud Run's request
+- **What it keeps:** a log line per HTTP request (method, path, status) and the ingress's access
   logs, which include your IP address. Tool arguments and results are not logged.
 - **Limits:** 60 requests per minute per IP.
 
