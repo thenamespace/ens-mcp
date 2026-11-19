@@ -1,13 +1,14 @@
 import { Effect, Layer } from "effect";
 import { McpSchema, McpServer } from "effect/ai";
 
+import { completeName } from "../ens/completion.js";
 import { Ens } from "../ens/Ens.js";
 import { Name } from "../schemas/Name.js";
 import { getNameHistory } from "../tools/lists/getNameHistory/handler.js";
 import { GetNameHistory } from "../tools/lists/getNameHistory/tool.js";
 import { listSubnames } from "../tools/lists/listSubnames/handler.js";
 import { ListSubnames } from "../tools/lists/listSubnames/tool.js";
-import { completeName, json } from "./content.js";
+import { json } from "./content.js";
 
 const name = McpSchema.param("name", Name);
 

@@ -1,5 +1,13 @@
 import { Array as Arr, Layer } from "effect";
 
+import { AuditNamePrompt } from "../prompts/auditName.js";
+import { CreateSubnamesForTeamPrompt } from "../prompts/createSubnamesForTeam.js";
+import { ExplainEnsErrorPrompt } from "../prompts/explainEnsError.js";
+import { MigrateToEnsv2Prompt } from "../prompts/migrateToEnsv2.js";
+import { PortfolioReviewPrompt } from "../prompts/portfolioReview.js";
+import { RegisterANamePrompt } from "../prompts/registerAName.js";
+import { RenewExpiringNamesPrompt } from "../prompts/renewExpiringNames.js";
+import { SetUpProfilePrompt } from "../prompts/setUpProfile.js";
 import { AddressResources } from "../resources/address.js";
 import { NameResources } from "../resources/name.js";
 import { NameActivityResources } from "../resources/nameActivity.js";
@@ -41,5 +49,13 @@ export const registrations = (enabled: ReadonlyArray<Toolset>) => {
     ErrorResources,
     RecordsResource,
     EnsSkill,
+    // Prompts walk through tools, so each needs the toolsets whose tools it calls.
+    ...(has("register") ? [RegisterANamePrompt] : []),
+    ...(has("register") && has("lists") ? [RenewExpiringNamesPrompt] : []),
+    ...(has("manage") ? [SetUpProfilePrompt, CreateSubnamesForTeamPrompt] : []),
+    ...(has("advanced") ? [MigrateToEnsv2Prompt] : []),
+    ...(has("lookup") ? [AuditNamePrompt] : []),
+    ...(has("lookup") && has("lists") ? [PortfolioReviewPrompt] : []),
+    ExplainEnsErrorPrompt,
   );
 };

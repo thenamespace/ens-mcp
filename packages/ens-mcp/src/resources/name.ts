@@ -1,13 +1,14 @@
 import { Effect, Layer } from "effect";
 import { McpSchema, McpServer } from "effect/ai";
 
+import { completeName } from "../ens/completion.js";
 import { Ens } from "../ens/Ens.js";
 import { Name } from "../schemas/Name.js";
 import { getNameDetails } from "../tools/lookup/getNameDetails/handler.js";
 import { GetNameDetails } from "../tools/lookup/getNameDetails/tool.js";
 import { getProfile } from "../tools/lookup/getProfile/handler.js";
 import { GetProfile } from "../tools/lookup/getProfile/tool.js";
-import { completeName, json } from "./content.js";
+import { json } from "./content.js";
 
 const name = McpSchema.param("name", Name);
 
