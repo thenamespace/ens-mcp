@@ -48,9 +48,9 @@ WORKDIR /app
 COPY --from=builder --chown=node:node /prod/ ./
 USER node
 EXPOSE 8080
-# The hosted server at ens-mcp.namespace.ninja: its configuration lives here, so Cloud Run sets
-# nothing but PORT. Cloud Run's front end appends the client to X-Forwarded-For (one hop); add one
-# for an external load balancer. Override the command to run the image with other settings.
+# The hosted server at ens-mcp.namespace.ninja: its configuration lives here, so the deployment
+# sets no environment variables. Traefik sets X-Forwarded-For to the client's address (one hop);
+# add one per proxy in front of it. Override the command to run the image with other settings.
 CMD ["node", "dist/bin.js", "--http", \
      "--toolsets", "lookup,lists,register,manage,utils", \
      "--rpc-url", "https://rpc.namespace.ninja/rpc/1", "--require-rpc", \
