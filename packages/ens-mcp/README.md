@@ -4,6 +4,19 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server for ENS (Ethe
 
 Version 0.1.0 is in development.
 
+## Hosted server
+
+Connect any MCP client that speaks Streamable HTTP to `https://ens-mcp.namespace.ninja/mcp`; no
+sign-in is needed. For Claude Code:
+
+```sh
+claude mcp add --transport http ens https://ens-mcp.namespace.ninja/mcp
+```
+
+It reads mainnet with the `lookup`, `lists`, `register`, `manage` and `utils` toolsets and allows
+60 requests per minute from each IP address. For `advanced`, Sepolia or your own RPC, run the
+server yourself.
+
 ## Run
 
 ```sh
@@ -11,29 +24,38 @@ npx -y @thenamespace/ens-mcp               # stdio, for local MCP clients
 npx -y @thenamespace/ens-mcp --http        # Streamable HTTP at http://127.0.0.1:8080/mcp
 ```
 
-| Flag                | Environment variable      | Default      |
-| ------------------- | ------------------------- | ------------ |
-| `--http`            |                           | stdio        |
-| `--host`            | `HOST`                    | `127.0.0.1`  |
-| `--port`            | `PORT`                    | `8080`       |
-| `--allowed-origins` | `ENS_MCP_ALLOWED_ORIGINS` | none         |
-| `--chain`           | `ENS_MCP_CHAIN`           | `mainnet`    |
-| `--mainnet-rpc-url` | `ENS_MCP_MAINNET_RPC_URL` | a public RPC |
-| `--sepolia-rpc-url` | `ENS_MCP_SEPOLIA_RPC_URL` | a public RPC |
-| `--require-rpc`     | `ENS_MCP_REQUIRE_RPC`     | `false`      |
-| `--indexer`         | `ENS_MCP_INDEXER`         | `bigname`    |
+| Flag                | Environment variable      | Default                       |
+| ------------------- | ------------------------- | ----------------------------- |
+| `--http`            |                           | stdio                         |
+| `--host`            | `HOST`                    | `127.0.0.1`                   |
+| `--port`            | `PORT`                    | `8080`                        |
+| `--allowed-origins` | `ENS_MCP_ALLOWED_ORIGINS` | none                          |
+| `--rate-limit`      | `ENS_MCP_RATE_LIMIT`      | unlimited                     |
+| `--proxy-hops`      | `ENS_MCP_PROXY_HOPS`      | `0`                           |
+| `--chain`           | `ENS_MCP_CHAIN`           | `mainnet`                     |
+| `--rpc-url`         | `ENS_MCP_RPC_URL`         | a public RPC                  |
+| `--require-rpc`     | `ENS_MCP_REQUIRE_RPC`     | `false`                       |
+| `--indexer`         | `ENS_MCP_INDEXER`         | `bigname`                     |
+| `--toolsets`        | `ENS_MCP_TOOLSETS`        | `lookup,lists,register,utils` |
 
-- `--allowed-origins` takes a comma-separated list of browser origins allowed to call `/mcp`.
-  Clients that send no `Origin` header, such as desktop and command-line clients, are always
-  allowed.
+- `--allowed-origins` takes a comma-separated list of browser origins allowed to call `/mcp`, or
+  `*` for any, and answers their CORS requests. Clients that send no `Origin` header, such as
+  desktop and command-line clients, are always allowed.
+- `--rate-limit` caps the requests each client IP sends to `/mcp`, such as `60/min` (`s`, `min` or
+  `h`); over it, the server answers 429 with `Retry-After`. Each server process counts on its own.
+- `--proxy-hops` is the number of `X-Forwarded-For` entries your proxies append, so the rate limit
+  counts per client rather than per proxy: 1 behind a single proxy such as Cloud Run. Entries the
+  client sent itself are never trusted.
 - `--chain` is the chain the server reads ENS from: `mainnet` or `sepolia`. Run a second server
   for the other chain.
-- Public RPCs are rate limited; set an RPC URL for regular use. `--require-rpc` makes the server
-  refuse to start without one.
+- `--rpc-url` is the RPC for that chain. Public RPCs are rate limited; set one for regular use.
+  `--require-rpc` makes the server refuse to start without one.
 - `--indexer` reads name lists and history from [bigname](https://bigname.sh); on mainnet,
   goldsky answers when bigname cannot, including every Basenames query. `none` turns off the
   tools that list and search names.
 - `--toolsets` takes a comma-separated list of toolsets to enable, or `all`.
+- With `--http`, `GET /` describes the server and `GET /healthz` answers probes. Request bodies
+  are capped at 1 MiB.
 
 ## Tools
 

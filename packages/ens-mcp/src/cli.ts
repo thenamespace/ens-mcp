@@ -4,6 +4,7 @@ import { Command, Flag } from "effect/cli";
 import { Chain } from "./ens/Chain.js";
 import { Ens } from "./ens/Ens.js";
 import { HttpServer } from "./server/http.js";
+import { RateLimit } from "./server/rateLimit.js";
 import { StdioServer } from "./server/stdio.js";
 import { defaultToolsets, Toolsets } from "./Toolset.js";
 
@@ -29,7 +30,27 @@ const allowedOrigins = Flag.String("allowed-origins").pipe(
   Flag.withDefault(""),
   Flag.map((value) => Arr.filter(Arr.map(Str.split(",")(value), Str.trim), Str.isNonEmpty)),
   Flag.withDescription(
-    "Comma-separated browser origins allowed to call /mcp (env: ENS_MCP_ALLOWED_ORIGINS)",
+    "Comma-separated browser origins allowed to call /mcp, or * for any " +
+      "(env: ENS_MCP_ALLOWED_ORIGINS)",
+  ),
+);
+
+const rateLimit = Flag.String("rate-limit").pipe(
+  Flag.withSchema(RateLimit),
+  Flag.withFallbackConfig(Config.schema(RateLimit, "ENS_MCP_RATE_LIMIT")),
+  Flag.optional,
+  Flag.withDescription(
+    "Requests per client IP to /mcp with --http, such as 60/min (s, min or h); unlimited when " +
+      "unset (env: ENS_MCP_RATE_LIMIT)",
+  ),
+);
+
+const proxyHops = Flag.Int("proxy-hops").pipe(
+  Flag.withFallbackConfig(Config.Int("ENS_MCP_PROXY_HOPS")),
+  Flag.withDefault(0),
+  Flag.withDescription(
+    "X-Forwarded-For entries your proxies append, to find the client IP for --rate-limit; " +
+      "0 uses the connection's address (env: ENS_MCP_PROXY_HOPS)",
   ),
 );
 
@@ -75,6 +96,8 @@ const flags = {
   host,
   port,
   allowedOrigins,
+  rateLimit,
+  proxyHops,
   chain,
   rpcUrl,
   requireRpc,

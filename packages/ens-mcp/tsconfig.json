@@ -19,11 +19,13 @@
           "@ensforge/sdk/internal/rpc",
           "@ensforge/sdk/internal/write/simulate",
           "@effect/platform-node",
+          "effect/ByteSize",
           "effect/FileSystem",
           "effect/Path",
           "effect/ai",
           "effect/cli",
-          "effect/http"
+          "effect/http",
+          "effect/persistence"
         ]
       }
     ]

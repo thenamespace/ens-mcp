@@ -15,7 +15,7 @@
           "unstableApiUsage": "off"
         },
         "keyPatterns": [{ "target": "service", "pattern": "package-identifier" }],
-        "allowedUnstableApis": ["@effect/vitest", "effect/ai"]
+        "allowedUnstableApis": ["@effect/vitest", "effect/ai", "effect/http"]
       }
     ]
   },

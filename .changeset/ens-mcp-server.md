@@ -15,4 +15,7 @@ access, approvals, migration to ENSv2 and DNS names; `utils` normalises names an
 converts coin types and content hashes. Resources expose names, addresses, the chain's contracts,
 error codes and record keys as context; prompts walk through registration, profiles, renewals,
 team subnames, migration, audits and portfolio reviews; and the `ens` Agent Skill is served at
-`skill://ens/SKILL.md`. The server never signs or sends transactions.
+`skill://ens/SKILL.md`. Over HTTP, `--rate-limit` caps requests per client IP (with
+`--proxy-hops` behind proxies), `--allowed-origins '*'` admits any browser origin with CORS, and
+`GET /` describes the server. The hosted server runs at `https://ens-mcp.namespace.ninja/mcp`. The
+server never signs or sends transactions.
