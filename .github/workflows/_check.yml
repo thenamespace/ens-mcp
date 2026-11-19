@@ -24,7 +24,7 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           cache: pnpm
-      - run: pnpm ci:check
+      - run: pnpm check
       - run: pnpm pack:check
 
   # The image deploy.yml ships, built but not pushed, so a broken Dockerfile fails the PR.

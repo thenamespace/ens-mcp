@@ -102,7 +102,7 @@ jobs:
           pnpm release:version
           git diff --stat
 
-      - run: pnpm release:prepare
+      - run: pnpm check && pnpm pack:check
 
       # Packs the publish plan from the plan job; a dry run packs the versions made above.
       - uses: changesets/action/pack@v2.1.2

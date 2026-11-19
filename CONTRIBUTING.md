@@ -45,7 +45,7 @@ pnpm check
 pnpm pack:check
 ```
 
-CI runs the same (`pnpm ci:check`, then `pnpm pack:check`) and builds the Docker image.
+CI runs the same (`pnpm check`, then `pnpm pack:check`) and builds the Docker image.
 `pnpm check` covers formatting (Oxfmt), linting (Oxlint with the Effect presets), type checking,
 builds and tests. `pnpm pack:check` validates package metadata and exports.
 
@@ -89,7 +89,7 @@ installs Node from `.node-version`, pnpm from `packageManager` and the frozen de
 
 | Workflow               | Runs                                                                                              | Trigger                                    |
 | ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `ci.yml`               | `_check.yml`: `pnpm ci:check`, `pnpm pack:check`, the Docker image build and a zizmor audit       | pull requests, `main`, merge queue, manual |
+| `ci.yml`               | `_check.yml`: `pnpm check`, `pnpm pack:check`, the Docker image build and a zizmor audit          | pull requests, `main`, merge queue, manual |
 | `pr-title.yml`         | the PR title as a Conventional Commit with commitlint's types                                     | pull requests                              |
 | `changeset-status.yml` | the packages the PR releases, in the job summary (never fails)                                    | pull requests                              |
 | `release.yml`          | the npm release (below)                                                                           | manual, default branch                     |
@@ -122,7 +122,7 @@ publish with [npm trusted publishing](https://docs.npmjs.com/trusted-publishers)
 exists anywhere, and npm attaches provenance to each version.
 
 1. **Dry run** (the default): versions the packages inside the runner, runs
-   `pnpm release:prepare` and packs. Nothing is pushed or published.
+   `pnpm check` and `pnpm pack:check`, and packs. Nothing is pushed or published.
 2. **Version PR**: run it again with _dry run_ unchecked. With pending changesets it opens or
    updates the `chore(release): version packages` PR. Review and merge it; run CI on its branch
    manually first, as GitHub does not run CI on PRs the workflow opens.
