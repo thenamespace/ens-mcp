@@ -1,7 +1,7 @@
 import { Cause, Context, Duration, Effect, Layer, Option, Redacted } from "effect";
 
 import { Ensforge } from "@ensforge/sdk/effect";
-import { bigname } from "@ensforge/sdk/indexer";
+import { bigname, fallback, goldsky } from "@ensforge/sdk/indexer";
 import { createPublicClient, http, type PublicClient } from "viem";
 
 import { StartupError } from "../StartupError.js";
@@ -32,13 +32,20 @@ export class Ens extends Context.Service<
       Effect.gen(function* () {
         const client = Ensforge.create({
           publicClient: yield* publicClient(options),
-          ...(options.indexer === "bigname" ? { indexer: bigname() } : {}),
+          ...(options.indexer === "none" ? {} : { indexer: indexer(options.chain) }),
         });
 
         return Ens.of({ chain: options.chain, client, hasIndexer: options.indexer !== "none" });
       }),
     );
 }
+
+/**
+ * bigname, and on mainnet goldsky behind it: goldsky answers when bigname cannot, including every
+ * Basenames query, which bigname does not index.
+ */
+const indexer = (chain: Chain) =>
+  chain === "mainnet" ? fallback([bigname(), goldsky()]) : bigname();
 
 /**
  * A viem client on the configured RPC, checked to serve the configured chain, or on viem's public

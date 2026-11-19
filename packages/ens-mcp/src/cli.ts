@@ -55,7 +55,8 @@ const indexer = Flag.Literals("indexer", ["bigname", "none"]).pipe(
   Flag.withFallbackConfig(Config.Literals(["bigname", "none"], "ENS_MCP_INDEXER")),
   Flag.withDefault("bigname"),
   Flag.withDescription(
-    "Indexer for name lists and history; none disables those tools (env: ENS_MCP_INDEXER)",
+    "Indexer for name lists and history: bigname (goldsky as fallback and for Basenames on " +
+      "mainnet), or none to disable those tools (env: ENS_MCP_INDEXER)",
   ),
 );
 
