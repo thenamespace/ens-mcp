@@ -1,9 +1,9 @@
 # Releases from the default branch, dispatched by a maintainer. With pending changesets it opens
 # (or updates) the version PR; once that PR is merged, it checks and publishes the exact packed
-# tarballs with npm trusted publishing (OIDC, no npm token) and provenance, then tags, creates
-# GitHub releases and publishes server.json to the MCP Registry. A dry run (the default) versions
-# temporarily in the runner, prepares and packs, and creates nothing. npm checks this filename:
-# keep it `release.yml`.
+# tarballs with npm trusted publishing (OIDC, no npm token) and provenance, tags, creates GitHub
+# releases, then publishes server.json to the MCP Registry (mcp-registry.yml). A dry run (the
+# default) versions temporarily in the runner, prepares and packs, and creates nothing. npm checks
+# this filename: keep it `release.yml`.
 name: Release
 
 on:
@@ -126,9 +126,11 @@ jobs:
     if: ${{ !inputs.dry-run && needs.plan.outputs.mode == 'publish' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      ens-mcp-version: ${{ steps.server.outputs.version }}
     permissions:
       contents: write # tags and GitHub releases
-      id-token: write # npm trusted publishing, provenance and the MCP Registry login
+      id-token: write # npm trusted publishing and provenance
     steps:
       - uses: actions/checkout@v7
         with:
@@ -147,26 +149,13 @@ jobs:
         env:
           NPM_CONFIG_PROVENANCE: "true"
           PNPM_CONFIG_PROVENANCE: "true"
-      # The registry holds metadata only: server.json, versioned like the npm package just published.
-      - name: Publish to the MCP Registry
-        if: contains(steps.publish.outputs.published-packages, '"@thenamespace/ens-mcp"')
+      - name: Find the published server version
+        id: server
         env:
           PUBLISHED: ${{ steps.publish.outputs.published-packages }}
-          MCP_PUBLISHER_VERSION: "1.8.9"
-          MCP_PUBLISHER_SHA256: 4d527ca8f1ced0394c962dc925c2a4a4addef441cbefd62501c875e9481823a8
         run: |
-          curl -fsSL -o "$RUNNER_TEMP/mcp-publisher.tar.gz" \
-            "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz"
-          echo "$MCP_PUBLISHER_SHA256  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum --check
-          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
-
-          version=$(jq -r '.[] | select(.name == "@thenamespace/ens-mcp") | .version' <<< "$PUBLISHED")
-          cd packages/ens-mcp
-          jq --arg version "$version" '.version = $version | .packages[0].version = $version' \
-            server.json > "$RUNNER_TEMP/server.json"
-          mv "$RUNNER_TEMP/server.json" server.json
-          "$RUNNER_TEMP/mcp-publisher" login github-oidc
-          "$RUNNER_TEMP/mcp-publisher" publish
+          version=$(printf '%s\n' "${PUBLISHED:-[]}" | jq -r '.[] | select(.name == "@thenamespace/ens-mcp") | .version')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Write the job summary
         if: always()
         env:
@@ -176,3 +165,14 @@ jobs:
             echo "### Published"
             printf '%s\n' "${PUBLISHED:-[]}" | jq -r '.[] | "- \(.name)@\(.version)"'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Its own job, so a failed registry publish is re-run alone without publishing to npm again.
+  registry:
+    needs: publish
+    if: needs.publish.outputs.ens-mcp-version != ''
+    permissions:
+      contents: read
+      id-token: write # MCP Registry login with GitHub OIDC
+    uses: ./.github/workflows/mcp-registry.yml
+    with:
+      version: ${{ needs.publish.outputs.ens-mcp-version }}
