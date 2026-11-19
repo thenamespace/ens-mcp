@@ -13,7 +13,7 @@ const live = process.env["ENS_MCP_LIVE"] === "1";
 const MainnetEns = Layer.unwrap(
   Effect.gen(function* () {
     const rpcUrl = yield* Config.option(Config.Redacted("ENS_MCP_RPC_URL"));
-    return Ens.layer({ chain: "mainnet", rpcUrl, requireRpc: false, indexer: "none" });
+    return Ens.layer({ chain: "mainnet", rpcUrl, requireRpc: false, indexer: "bigname" });
   }),
 );
 
@@ -75,5 +75,41 @@ describe.skipIf(!live)("live mainnet (ENS_MCP_LIVE=1)", () => {
         expect(permissions.structuredContent).toMatchObject({ can: { setRecords: true } });
       }).pipe(Effect.scoped),
     30_000,
+  );
+
+  it.live(
+    "lists names, subnames and history through the indexer",
+    () =>
+      Effect.gen(function* () {
+        const client = yield* mcpClient({ ens: MainnetEns });
+
+        const [owned, subnames, history, status] = yield* Effect.all(
+          [
+            client.callTool({
+              name: "list_names_for_address",
+              arguments: { address: "nick.eth", limit: 2 },
+            }),
+            client.callTool({ name: "list_subnames", arguments: { name: "ens.eth", limit: 2 } }),
+            client.callTool({
+              name: "get_name_history",
+              arguments: { name: "nick.eth", types: ["registration"], limit: 1 },
+            }),
+            client.callTool({ name: "get_indexer_status", arguments: {} }),
+          ],
+          { concurrency: "unbounded" },
+        );
+
+        expect(owned.structuredContent).toMatchObject({
+          address: "0xb8c2C29ee19D8307cb7255e1Cd9CbDE883A267d5",
+          items: [{ relations: expect.any(Array) }, {}],
+          cursor: expect.any(String),
+        });
+        expect(subnames.structuredContent).toMatchObject({ items: [{}, {}] });
+        expect(history.structuredContent).toMatchObject({
+          items: [{ type: "registration", summary: expect.stringContaining("Registered") }],
+        });
+        expect(status.structuredContent).toMatchObject({ status: "ready" });
+      }).pipe(Effect.scoped),
+    60_000,
   );
 });
