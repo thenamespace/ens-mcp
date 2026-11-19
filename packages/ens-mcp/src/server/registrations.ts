@@ -1,5 +1,8 @@
 import { Array as Arr, Layer } from "effect";
 
+import { AddressResources } from "../resources/address.js";
+import { NameResources } from "../resources/name.js";
+import { NameActivityResources } from "../resources/nameActivity.js";
 import { AdvancedTools } from "../tools/advanced/index.js";
 import { ListsTools } from "../tools/lists/index.js";
 import { LookupTools } from "../tools/lookup/index.js";
@@ -22,9 +25,13 @@ const toolsets = {
 export const writeToolsets: ReadonlyArray<Toolset> = ["register", "manage", "advanced"];
 
 /** The tools, resources and prompts of the enabled toolsets. */
-export const registrations = (enabled: ReadonlyArray<Toolset>) =>
-  Layer.mergeAll(
+export const registrations = (enabled: ReadonlyArray<Toolset>) => {
+  const has = (toolset: Toolset) => Arr.contains(enabled, toolset);
+  return Layer.mergeAll(
     Layer.empty,
     ...Arr.map(enabled, (toolset) => toolsets[toolset]),
     ...(Arr.some(enabled, (toolset) => Arr.contains(writeToolsets, toolset)) ? [PlansTools] : []),
+    ...(has("lookup") ? [NameResources, AddressResources({ names: has("lists") })] : []),
+    ...(has("lists") ? [NameActivityResources] : []),
   );
+};
