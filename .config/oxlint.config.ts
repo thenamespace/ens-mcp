@@ -30,9 +30,9 @@ export default defineConfig({
       },
     },
     {
-      // Only the published entries are public API: internal modules and the private test and tool
-      // packages have no stability to leak.
-      files: ["**/src/internal/**", "**/tests/**", "**/tools/**"],
+      // Only published entries are public API. @thenamespace/ens-mcp ships a binary and no library
+      // entry, and the test and tool packages are private, so they have no stability to leak.
+      files: ["**/src/internal/**", "**/packages/ens-mcp/**", "**/tests/**", "**/tools/**"],
       rules: { "effecttsgo/api-stability-leak": "off" },
     },
   ],
