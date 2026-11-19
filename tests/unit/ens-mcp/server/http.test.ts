@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Deferred, Effect, Layer, Option, Schema } from "effect";
+import { Deferred, Effect, Layer, Option, Schema, String as Str } from "effect";
 import { HttpEffect, HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/http";
 
 import { PackageInfo } from "@thenamespace/ens-mcp/internal/PackageInfo";
@@ -61,6 +61,21 @@ const mcpPost = (body: unknown, headers: Record<string, string> = {}) =>
         },
         body: json,
       }),
+  );
+
+const initialize = (headers: Record<string, string> = {}, clientName = "test") =>
+  mcpPost(
+    {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-11-25",
+        capabilities: {},
+        clientInfo: { name: clientName, version: "0" },
+      },
+    },
+    headers,
   );
 
 const discover = (headers: Record<string, string> = {}) =>
@@ -178,24 +193,52 @@ describe("HTTP server", () => {
     }).pipe(Effect.scoped),
   );
 
+  it.effect("charges more for opening a session, which stays in memory, and caps its size", () =>
+    Effect.gen(function* () {
+      const handler = yield* instance({
+        rateLimit: Option.some({ limit: 20, unit: "min" }),
+        proxyHops: 1,
+      });
+      const from = { "x-forwarded-for": "203.0.113.7" };
+
+      const sessions = yield* Effect.forEach(
+        [1, 2, 3],
+        () => Effect.map(send(handler, initialize(from)), (response) => response.status),
+        { concurrency: 1 },
+      );
+      const oversized = yield* send(
+        handler,
+        initialize({ "x-forwarded-for": "203.0.113.8" }, Str.repeat(20_000)("x")),
+      );
+
+      expect(sessions).toEqual([200, 200, 429]);
+      expect(oversized.status).toBe(413);
+    }).pipe(Effect.scoped),
+  );
+
+  it.effect("counts IPv6 clients per /64 and refuses requests from no known client", () =>
+    Effect.gen(function* () {
+      const handler = yield* instance({
+        rateLimit: Option.some({ limit: 1, unit: "min" }),
+        proxyHops: 1,
+      });
+
+      const first = yield* send(handler, discover({ "x-forwarded-for": "2001:db8:1:2::1" }));
+      const sameBlock = yield* send(handler, discover({ "x-forwarded-for": "2001:db8:1:2::ffff" }));
+      const unknown = yield* send(handler, discover());
+
+      expect(first.status).toBe(200);
+      expect(sameBlock.status).toBe(429);
+      expect(unknown.status).toBe(400);
+    }).pipe(Effect.scoped),
+  );
+
   it.effect("sends a 2025-11-25 session that reaches a restarted server back to initialise", () =>
     Effect.gen(function* () {
       const before = yield* instance();
       const after = yield* instance();
 
-      const initialized = yield* send(
-        before,
-        mcpPost({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "initialize",
-          params: {
-            protocolVersion: "2025-11-25",
-            capabilities: {},
-            clientInfo: { name: "test", version: "0" },
-          },
-        }),
-      );
+      const initialized = yield* send(before, initialize());
       const session = initialized.headers.get("mcp-session-id") ?? "";
       const listed = (handler: Handler) =>
         send(

@@ -95,7 +95,7 @@ export const HttpApp = (options: HttpOptions) => {
   const Health = HttpRouter.add("GET", "/healthz", HttpServerResponse.text("ok"));
   const BodyLimit = HttpRouter.middleware(
     (httpEffect) =>
-      Effect.provideService(httpEffect, HttpIncomingMessage.MaxBodySize, ByteSize.mebibytes(1)),
+      Effect.provideService(httpEffect, HttpIncomingMessage.MaxBodySize, ByteSize.kibibytes(256)),
     { global: true },
   );
   // Effect checks origins against an exact list, so `*` drops the header before it checks.

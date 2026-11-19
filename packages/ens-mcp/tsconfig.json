@@ -25,6 +25,7 @@
           "effect/ai",
           "effect/cli",
           "effect/http",
+          "effect/net",
           "effect/persistence"
         ]
       }
