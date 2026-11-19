@@ -78,6 +78,9 @@ Oxfmt does not insert logical blank lines; review grouping explicitly when writi
 - Call ensforge through `runEns` (retries, `EnsToolError`); batch items fail with `ItemError`
   without failing the call. Missing records are `null`, not errors.
 - Clean record text set by name owners with `cleanRecordText`.
+- Write tools never send: they call `prepareWrite` with the ensforge action, which simulates it and
+  returns a `PreparedWrite` (summary, issues, requirements, cost, steps, signing, calls, plan
+  handle). `account` and other address parameters accept ENS names (`resolveAccount`).
 - When a tool is added, update the toolset's line in `src/server/instructions.ts` and the README.
 
 ## Tests

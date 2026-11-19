@@ -65,6 +65,31 @@ These read from the indexer, which can lag the chain by a few blocks. Results co
 | `list_expiring_names`    | Names expiring soon, overall, under a parent or for one address       |
 | `get_indexer_status`     | Whether the indexer is ready and how far it lags the chain            |
 
+### `register` and `manage`
+
+Write tools prepare transactions for the user's own wallet; the server never signs or sends
+anything. Each returns a summary, whether the checked steps would succeed (and why not), what the
+account needs (such as a USDC balance), the cost, plain signing instructions, the unsigned calls and
+a plan handle for `get_plan`. Registrations and renewals are paid in USDC by default, or DAI;
+registering takes two signatures at least a minute apart.
+
+| Tool                 | Answers or prepares                                                  |
+| -------------------- | -------------------------------------------------------------------- |
+| `check_availability` | Whether up to 50 names can be registered, with prices                |
+| `get_price`          | Registration or renewal price of names for a duration                |
+| `register_name`      | Registering names, with records and the primary name                 |
+| `renew_names`        | Renewing names                                                       |
+| `set_records`        | Setting or deleting text records, addresses and the content hash     |
+| `set_primary_name`   | Setting an account's primary name, on mainnet or an L2               |
+| `create_subname`     | Creating a subname with its owner, records, resolver and permissions |
+| `update_subname`     | Changing a subname's owner, resolver or expiry                       |
+| `remove_subname`     | Removing a subname                                                   |
+| `transfer_name`      | Transferring a name                                                  |
+| `set_resolver`       | Changing a name's resolver                                           |
+| `get_plan`           | Reading a prepared plan back from its handle                         |
+
+`register` is on by default; `manage` is enabled with `--toolsets`.
+
 ### `utils`
 
 These work offline.
