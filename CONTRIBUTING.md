@@ -109,6 +109,22 @@ Check workflow changes locally with
 with the short commit SHA and `latest`, then sends that tag to `thenamespace/infra`. It needs the
 repository secrets `WORKLOAD_IDENTITY_PROVIDER` and `REPOSITORY_DISPATCH_PAT`.
 
+### Hosted server
+
+The image is the hosted server's configuration: the `Dockerfile` command sets the toolsets, the
+Namespace RPC proxy, any origin, 60 requests per minute per IP and one proxy hop. The Cloud Run
+service needs no environment variables (it injects `PORT`); in `thenamespace/infra` it runs with:
+
+- minimum 0 instances, so it scales to zero, and a small maximum;
+- concurrency 80, CPU boost on start and a request timeout of at least 300 s;
+- session affinity, so 2025-11-25 clients keep their session on one instance (one that lands
+  elsewhere gets 404 and initialises again; 2026-07-28 clients have no session);
+- unauthenticated invocations, behind `ens-mcp.namespace.ninja`.
+
+The rate limit is per instance and keyed on the `X-Forwarded-For` entry Cloud Run appends. Behind
+an external load balancer, which appends one more, raise `--proxy-hops` to 2. After a deploy, check
+that two requests from different networks are limited separately.
+
 ## Changesets
 
 Add a changeset for every user-visible change to `@thenamespace/ens-mcp`:

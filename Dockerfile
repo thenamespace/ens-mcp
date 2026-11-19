@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# The ens-mcp server over HTTP, following Turborepo's Docker guide: `turbo prune` keeps only
+# The hosted ens-mcp server over HTTP, following Turborepo's Docker guide: `turbo prune` keeps only
 # @thenamespace/ens-mcp and the workspace packages it depends on, so the dependency layer is reused
 # until one of their manifests or the lockfile changes.
 #
@@ -48,4 +48,11 @@ WORKDIR /app
 COPY --from=builder --chown=node:node /prod/ ./
 USER node
 EXPOSE 8080
-CMD ["node", "dist/bin.js", "--http"]
+# The hosted server at ens-mcp.namespace.ninja: its configuration lives here, so Cloud Run sets
+# nothing but PORT. Cloud Run's front end appends the client to X-Forwarded-For (one hop); add one
+# for an external load balancer. Override the command to run the image with other settings.
+CMD ["node", "dist/bin.js", "--http", \
+     "--toolsets", "lookup,lists,register,manage,utils", \
+     "--rpc-url", "https://rpc.namespace.ninja/rpc/1", "--require-rpc", \
+     "--allowed-origins", "*", \
+     "--rate-limit", "60/min", "--proxy-hops", "1"]
