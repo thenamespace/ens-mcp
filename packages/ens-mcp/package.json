@@ -61,5 +61,6 @@
   },
   "engines": {
     "node": ">=26"
-  }
+  },
+  "mcpName": "io.github.thenamespace/ens-mcp"
 }

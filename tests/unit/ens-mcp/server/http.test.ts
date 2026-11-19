@@ -93,6 +93,33 @@ describe("HTTP server", () => {
     }).pipe(Effect.scoped),
   );
 
+  it.effect("describes itself in a server card at the address clients reach it on", () =>
+    Effect.gen(function* () {
+      const handler = yield* instance({ proxyHops: 1, toolsets: ["lookup", "utils"] });
+
+      const response = yield* send(
+        handler,
+        get("/.well-known/mcp.json", {
+          headers: { host: "ens-mcp.namespace.ninja", "x-forwarded-proto": "https" },
+        }),
+      );
+      const card = yield* Schema.decodeEffect(Schema.fromJsonString(Schema.Unknown))(response.body);
+
+      expect(card).toMatchObject({
+        name: "io.github.thenamespace/ens-mcp",
+        version: "0.1.0",
+        remotes: [
+          {
+            type: "streamable-http",
+            url: "https://ens-mcp.namespace.ninja/mcp",
+            supportedProtocolVersions: ["2026-07-28", "2025-11-25"],
+          },
+        ],
+        _meta: { "ninja.namespace/ens-mcp": { chain: "mainnet", toolsets: ["lookup", "utils"] } },
+      });
+    }).pipe(Effect.scoped),
+  );
+
   it.effect("serves stateless clients without subscriptions", () =>
     Effect.gen(function* () {
       const handler = yield* instance();

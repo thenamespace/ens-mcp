@@ -18,6 +18,7 @@ import type { Toolset } from "../Toolset.js";
 import { serverOptions } from "./options.js";
 import { type RateLimit, RateLimitMiddleware } from "./rateLimit.js";
 import { registrations } from "./registrations.js";
+import { serverCard } from "./serverCard.js";
 
 export interface HttpOptions {
   /** Browser origins allowed to call `/mcp`, or `*` for any; requests without `Origin` always are. */
@@ -29,8 +30,8 @@ export interface HttpOptions {
 }
 
 /**
- * The HTTP routes: MCP over Streamable HTTP at `/mcp`, a page on how to connect at `/`, and
- * `/healthz` for load balancers and container probes.
+ * The HTTP routes: MCP over Streamable HTTP at `/mcp`, a page on how to connect at `/`, the server
+ * card at `/.well-known/mcp.json`, and `/healthz` for load balancers and container probes.
  */
 export const HttpApp = (options: HttpOptions) => {
   const anyOrigin = Arr.contains(options.allowedOrigins, "*");
@@ -63,6 +64,21 @@ export const HttpApp = (options: HttpOptions) => {
             "https://github.com/thenamespace/ens-mcp\n",
         ),
       );
+      const ServerCard = HttpRouter.add(
+        "GET",
+        "/.well-known/mcp.json",
+        HttpServerRequest.HttpServerRequest.use((request) =>
+          HttpServerResponse.json(
+            serverCard({
+              version,
+              chain: ens.chain,
+              toolsets: options.toolsets,
+              request,
+              proxyHops: options.proxyHops,
+            }),
+          ),
+        ),
+      );
       return Layer.mergeAll(
         Option.match(options.rateLimit, {
           onNone: () => Endpoint,
@@ -72,6 +88,7 @@ export const HttpApp = (options: HttpOptions) => {
             ),
         }),
         Home,
+        ServerCard,
       );
     }),
   );
