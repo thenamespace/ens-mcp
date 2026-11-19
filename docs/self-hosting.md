@@ -30,6 +30,7 @@ Every flag has an environment variable; a flag wins over its variable.
 | `--allowed-origins` | `ENS_MCP_ALLOWED_ORIGINS` | none                          |
 | `--rate-limit`      | `ENS_MCP_RATE_LIMIT`      | unlimited                     |
 | `--proxy-hops`      | `ENS_MCP_PROXY_HOPS`      | `0`                           |
+| `--log-level`       |                           | `info`                        |
 
 - **`--chain`**: `mainnet` or `sepolia`. One server reads one chain; run a second for the other.
 - **`--rpc-url`**: the RPC for that chain. Public RPCs are rate limited, so set your own for
@@ -38,6 +39,8 @@ Every flag has an environment variable; a flag wins over its variable.
   goldsky answering when bigname cannot on mainnet (including every Basenames query). `none` turns
   off the `lists` tools.
 - **`--toolsets`**: a comma-separated list, or `all`. See [Tools](tools.md).
+- **`--log-level`**: the least severe log line written to stderr: `debug`, `info`, `warn`,
+  `error` or `none`. The server logs startup and problems, never individual requests.
 
 ## Over HTTP
 
@@ -68,7 +71,7 @@ Traefik or nginx, `2` with a load balancer in front of it. Entries the client se
 
 The repository's [`Dockerfile`](../Dockerfile) builds the hosted server: its command sets the
 hosted configuration (the `manage` toolset added, the Namespace RPC, any origin, 60 requests per
-minute and one proxy hop). Override the command to run it your way:
+minute, one proxy hop and warnings-only logs). Override the command to run it your way:
 
 ```sh
 docker build -t ens-mcp .
@@ -82,8 +85,8 @@ the Namespace RPC with the `lookup`, `lists`, `register`, `manage` and `utils` t
 
 - **What it sees:** the requests your assistant sends, which include the names and addresses you
   ask about.
-- **What it keeps:** a log line per HTTP request (method, path, status) and the ingress's access
-  logs, which include your IP address. Tool arguments and results are not logged.
+- **What it keeps:** the ingress's access logs (time, path, status and your IP address). The server
+  itself logs only warnings and errors, and never tool arguments or results.
 - **Limits:** 60 requests per minute per IP.
 
 To keep your lookups to yourself, run the server locally with your own RPC.

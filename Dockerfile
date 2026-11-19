@@ -55,4 +55,5 @@ CMD ["node", "dist/bin.js", "--http", \
      "--toolsets", "lookup,lists,register,manage,utils", \
      "--rpc-url", "https://rpc.namespace.ninja/rpc/1", "--require-rpc", \
      "--allowed-origins", "*", \
-     "--rate-limit", "60/min", "--proxy-hops", "1"]
+     "--rate-limit", "60/min", "--proxy-hops", "1", \
+     "--log-level", "warn"]
