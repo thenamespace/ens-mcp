@@ -1,0 +1,4 @@
+# Passed to oxfmt with --ignore-path (with .gitignore); patterns in oxfmt.config.ts only resolve
+# inside .config/.
+pnpm-lock.yaml
+**/CHANGELOG.md

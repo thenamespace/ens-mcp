@@ -1,0 +1,20 @@
+# The server image (Dockerfile) builds from the repository root; `turbo prune` picks the files it
+# needs, so this only keeps local state and secrets out of the build context.
+.git
+.github
+.changeset
+.vscode
+.turbo
+**/.turbo
+**/node_modules
+**/dist
+**/.cache
+**/coverage
+**/reports
+**/.env*
+!**/.env.example
+research
+out
+gha-creds-*.json
+*.log
+*.tgz

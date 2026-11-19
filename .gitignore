@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnp.*
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Caches
+.turbo/
+.cache/
+.eslintcache
+.oxlintcache
+
+# Tests and reports
+coverage/
+reports/
+test-results/
+junit.xml
+*.lcov
+__snapshots__/*.snap.new
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+gha-creds-*.json
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Packed archives
+*.tgz
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local planning state
+research/
