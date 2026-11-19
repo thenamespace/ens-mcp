@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Config, Effect, Layer, Option } from "effect";
+import { Config, Effect, Layer } from "effect";
 
-import { Chains } from "@thenamespace/ens-mcp/internal/ens/Chains";
+import { Ens } from "@thenamespace/ens-mcp/internal/ens/Ens";
 
 import { mcpClient } from "./support/client.ts";
 
@@ -9,16 +9,11 @@ import { mcpClient } from "./support/client.ts";
 // oxlint-disable-next-line effecttsgo/process-env
 const live = process.env["ENS_MCP_LIVE"] === "1";
 
-// Reads mainnet through ENS_MCP_MAINNET_RPC_URL, or a public RPC when unset.
-const MainnetChains = Layer.unwrap(
+// Reads mainnet through ENS_MCP_RPC_URL, or a public RPC when unset.
+const MainnetEns = Layer.unwrap(
   Effect.gen(function* () {
-    const rpcUrl = yield* Config.option(Config.Redacted("ENS_MCP_MAINNET_RPC_URL"));
-    return Chains.layer({
-      defaultChain: "mainnet",
-      rpcUrls: { mainnet: rpcUrl, sepolia: Option.none() },
-      requireRpc: false,
-      indexer: "none",
-    });
+    const rpcUrl = yield* Config.option(Config.Redacted("ENS_MCP_RPC_URL"));
+    return Ens.layer({ chain: "mainnet", rpcUrl, requireRpc: false, indexer: "none" });
   }),
 );
 
@@ -27,7 +22,7 @@ describe.skipIf(!live)("live mainnet (ENS_MCP_LIVE=1)", () => {
     "resolves names, with a missing address as null",
     () =>
       Effect.gen(function* () {
-        const client = yield* mcpClient(MainnetChains);
+        const client = yield* mcpClient(MainnetEns);
 
         const result = yield* client.callTool({
           name: "resolve_name",

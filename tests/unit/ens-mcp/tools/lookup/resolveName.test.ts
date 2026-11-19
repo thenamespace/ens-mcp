@@ -1,13 +1,13 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 
-import { OfflineChains } from "../../support/chains.ts";
 import { mcpClient } from "../../support/client.ts";
+import { OfflineEns } from "../../support/ens.ts";
 
 describe("resolve_name", () => {
   it.effect("reports an unknown coin as a tool error", () =>
     Effect.gen(function* () {
-      const client = yield* mcpClient(OfflineChains);
+      const client = yield* mcpClient(OfflineEns);
 
       const result = yield* client.callTool({
         name: "resolve_name",
@@ -23,7 +23,7 @@ describe("resolve_name", () => {
 
   it.effect("fails invalid names one by one instead of the whole call", () =>
     Effect.gen(function* () {
-      const client = yield* mcpClient(OfflineChains);
+      const client = yield* mcpClient(OfflineEns);
 
       const result = yield* client.callTool({
         name: "resolve_name",

@@ -1,7 +1,7 @@
 import { Effect, Layer } from "effect";
 import { McpServer, Toolkit } from "effect/ai";
 
-import { Chains } from "../../ens/Chains.js";
+import { Ens } from "../../ens/Ens.js";
 import { ResolveName, resolveName } from "./resolveName.js";
 
 const LookupToolkit = Toolkit.make(ResolveName);
@@ -11,8 +11,8 @@ export const LookupTools = McpServer.toolkit(LookupToolkit).pipe(
   Layer.provide(
     LookupToolkit.toLayer(
       Effect.gen(function* () {
-        const chains = yield* Chains;
-        return { resolve_name: resolveName(chains) };
+        const ens = yield* Ens;
+        return { resolve_name: resolveName(ens) };
       }),
     ),
   ),

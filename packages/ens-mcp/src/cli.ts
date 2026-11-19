@@ -1,8 +1,8 @@
 import { Array as Arr, Config, Layer, String as Str } from "effect";
 import { Command, Flag } from "effect/cli";
 
-import { Chain, rpcUrlEnv } from "./ens/Chain.js";
-import { Chains } from "./ens/Chains.js";
+import { Chain } from "./ens/Chain.js";
+import { Ens } from "./ens/Ens.js";
 import { HttpServer } from "./server/http.js";
 import { StdioServer } from "./server/stdio.js";
 
@@ -35,24 +35,19 @@ const allowedOrigins = Flag.String("allowed-origins").pipe(
 const chain = Flag.Literals("chain", Chain.literals).pipe(
   Flag.withFallbackConfig(Config.Literals(Chain.literals, "ENS_MCP_CHAIN")),
   Flag.withDefault("mainnet"),
-  Flag.withDescription("Chain tools read when a call names none (env: ENS_MCP_CHAIN)"),
+  Flag.withDescription("Chain to read ENS from: mainnet or sepolia (env: ENS_MCP_CHAIN)"),
 );
 
-const rpcUrl = (network: Chain) =>
-  Flag.Redacted(`${network}-rpc-url`).pipe(
-    Flag.withFallbackConfig(Config.Redacted(rpcUrlEnv(network))),
-    Flag.optional,
-    Flag.withDescription(
-      `RPC URL for ${network}; a public RPC when unset (env: ${rpcUrlEnv(network)})`,
-    ),
-  );
+const rpcUrl = Flag.Redacted("rpc-url").pipe(
+  Flag.withFallbackConfig(Config.Redacted("ENS_MCP_RPC_URL")),
+  Flag.optional,
+  Flag.withDescription("RPC URL for the chain; a public RPC when unset (env: ENS_MCP_RPC_URL)"),
+);
 
 const requireRpc = Flag.Boolean("require-rpc").pipe(
   Flag.withFallbackConfig(Config.Boolean("ENS_MCP_REQUIRE_RPC")),
   Flag.withDefault(false),
-  Flag.withDescription(
-    "Refuse to start without an RPC URL for every chain (env: ENS_MCP_REQUIRE_RPC)",
-  ),
+  Flag.withDescription("Refuse to start without an RPC URL (env: ENS_MCP_REQUIRE_RPC)"),
 );
 
 const indexer = Flag.Literals("indexer", ["bigname", "none"]).pipe(
@@ -69,8 +64,7 @@ const flags = {
   port,
   allowedOrigins,
   chain,
-  mainnetRpcUrl: rpcUrl("mainnet"),
-  sepoliaRpcUrl: rpcUrl("sepolia"),
+  rpcUrl,
   requireRpc,
   indexer,
 };
@@ -80,9 +74,9 @@ export const cli = Command.make("ens-mcp", flags, (options) =>
   Layer.launch(
     (options.http ? HttpServer(options) : StdioServer).pipe(
       Layer.provide(
-        Chains.layer({
-          defaultChain: options.chain,
-          rpcUrls: { mainnet: options.mainnetRpcUrl, sepolia: options.sepoliaRpcUrl },
+        Ens.layer({
+          chain: options.chain,
+          rpcUrl: options.rpcUrl,
           requireRpc: options.requireRpc,
           indexer: options.indexer,
         }),

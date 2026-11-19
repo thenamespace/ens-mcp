@@ -26,9 +26,10 @@ npx -y @thenamespace/ens-mcp --http        # Streamable HTTP at http://127.0.0.1
 - `--allowed-origins` takes a comma-separated list of browser origins allowed to call `/mcp`.
   Clients that send no `Origin` header, such as desktop and command-line clients, are always
   allowed.
-- `--chain` is the chain tools read when a call does not name one: `mainnet` or `sepolia`.
+- `--chain` is the chain the server reads ENS from: `mainnet` or `sepolia`. Run a second server
+  for the other chain.
 - Public RPCs are rate limited; set an RPC URL for regular use. `--require-rpc` makes the server
-  refuse to start without one for every chain.
+  refuse to start without one.
 - `--indexer none` turns off the tools that list and search names.
 
 ## Tools
