@@ -1,0 +1,70 @@
+# Publishes packages/ens-mcp/server.json to the MCP Registry for a version already on npm. release.yml
+# calls it after each npm release; dispatch it from main (Actions → MCP Registry) to retry one.
+name: MCP Registry
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The published @thenamespace/ens-mcp version to register, e.g. 0.1.0
+        type: string
+        required: true
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write # MCP Registry login with GitHub OIDC
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # The registry checks the version on npm, where a new release takes minutes to appear.
+      - name: Wait for the version on npm
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          for attempt in $(seq 1 45); do
+            if curl -fsS -o /dev/null "https://registry.npmjs.org/@thenamespace%2fens-mcp/$VERSION"; then
+              exit 0
+            fi
+            echo "Attempt $attempt: @thenamespace/ens-mcp@$VERSION is not on npm yet"
+            sleep 20
+          done
+          echo "::error::@thenamespace/ens-mcp@$VERSION did not appear on npm within 15 minutes"
+          exit 1
+
+      - name: Publish server.json
+        env:
+          VERSION: ${{ inputs.version }}
+          MCP_PUBLISHER_VERSION: "1.8.9"
+          MCP_PUBLISHER_SHA256: 4d527ca8f1ced0394c962dc925c2a4a4addef441cbefd62501c875e9481823a8
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/mcp-publisher.tar.gz" \
+            "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz"
+          echo "$MCP_PUBLISHER_SHA256  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+
+          cd packages/ens-mcp
+          jq --arg version "$VERSION" '.version = $version | .packages[0].version = $version' \
+            server.json > "$RUNNER_TEMP/server.json"
+          mv "$RUNNER_TEMP/server.json" server.json
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+
+          # npm can answer before every registry mirror has the version: retry briefly.
+          for attempt in 1 2 3 4 5; do
+            if "$RUNNER_TEMP/mcp-publisher" publish; then exit 0; fi
+            echo "Attempt $attempt failed; retrying in 30 seconds"
+            sleep 30
+          done
+          exit 1

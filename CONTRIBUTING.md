@@ -92,13 +92,14 @@ public issues. See [SECURITY.md](SECURITY.md).
 Workflows live in `.github/workflows`; the shared composite action `.github/actions/setup`
 installs Node from `.node-version`, pnpm from `packageManager` and the frozen dependencies.
 
-| Workflow               | Runs                                                                                              | Trigger                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `ci.yml`               | `_check.yml`: `pnpm check`, `pnpm pack:check`, the Docker image build and a zizmor audit          | pull requests, `main`, merge queue, manual |
-| `pr-title.yml`         | the PR title as a Conventional Commit with commitlint's types                                     | pull requests                              |
-| `changeset-status.yml` | the packages the PR releases, in the job summary (never fails)                                    | pull requests                              |
-| `release.yml`          | the npm release (below)                                                                           | manual, default branch                     |
-| `deploy.yml`           | the server image to Artifact Registry, then the image tag to `thenamespace/infra` for the rollout | manual, default branch                     |
+| Workflow               | Runs                                                                                              | Trigger                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `ci.yml`               | `_check.yml`: `pnpm check`, `pnpm pack:check`, the Docker image build and a zizmor audit          | pull requests, `main`, merge queue, manual  |
+| `pr-title.yml`         | the PR title as a Conventional Commit with commitlint's types                                     | pull requests                               |
+| `changeset-status.yml` | the packages the PR releases, in the job summary (never fails)                                    | pull requests                               |
+| `release.yml`          | the npm release (below)                                                                           | manual, default branch                      |
+| `mcp-registry.yml`     | `packages/ens-mcp/server.json` to the MCP Registry once the version is on npm                     | after `release.yml` publishes; manual retry |
+| `deploy.yml`           | the server image to Artifact Registry, then the image tag to `thenamespace/infra` for the rollout | manual, default branch                      |
 
 Jobs get the least permissions they need, check out without persisted credentials and have
 timeouts. Dependabot proposes action, npm and Docker updates weekly, a week after their release.
@@ -149,7 +150,9 @@ exists anywhere, and npm attaches provenance to each version.
    updates the `chore(release): version packages` PR. Review and merge it; run CI on its branch
    manually first, as GitHub does not run CI on PRs the workflow opens.
 3. **Publish**: run it once more on the merged version commit. It prepares and packs, publishes
-   those archives with provenance, pushes the tags and creates the GitHub releases.
+   those archives with provenance, pushes the tags and creates the GitHub releases. Then
+   `mcp-registry.yml` waits for the version to appear on npm and publishes `server.json` to the MCP
+   Registry; if that fails, re-run the `registry` job, or run **MCP Registry** with the version.
 
 On npmjs.com, configure `@thenamespace/ens-mcp` → Settings → Trusted publishing → GitHub Actions
 with organization `thenamespace`, repository `ens-mcp` and workflow `release.yml`, then disallow
