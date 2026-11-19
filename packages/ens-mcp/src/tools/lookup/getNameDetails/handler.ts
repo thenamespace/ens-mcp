@@ -1,10 +1,10 @@
-import { Array as Arr, DateTime, Duration, Effect, Option, Record as Rec } from "effect";
+import { Array as Arr, DateTime, Effect, Option, Record as Rec } from "effect";
 
 import { Actions } from "@ensforge/sdk/effect";
 
 import type { Ens } from "../../../ens/Ens.js";
 import { runEns, type EnsToolError } from "../../../ens/errors.js";
-import { fromUnixSeconds } from "../../../schemas/Timestamp.js";
+import { daysUntil, fromUnixSeconds } from "../../../schemas/Timestamp.js";
 import { summarize } from "./summary.js";
 import type { GetNameDetails } from "./tool.js";
 
@@ -38,11 +38,7 @@ export const getNameDetails = (ens: Ens["Service"]) =>
         ? undefined
         : {
             at: fromUnixSeconds(state.expiry),
-            daysLeft: Math.floor(
-              Duration.toDays(
-                Duration.millis(Number(state.expiry) * 1000 - DateTime.toEpochMillis(now)),
-              ),
-            ),
+            daysLeft: daysUntil(state.expiry, now),
           };
     const gracePeriodEnd =
       state.gracePeriodEnd === null ? undefined : fromUnixSeconds(state.gracePeriodEnd);

@@ -1,5 +1,6 @@
 import { Array as Arr, Layer } from "effect";
 
+import { ListsTools } from "../tools/lists/index.js";
 import { LookupTools } from "../tools/lookup/index.js";
 import { UtilsTools } from "../tools/utils/index.js";
 import type { Toolset } from "../Toolset.js";
@@ -7,7 +8,7 @@ import type { Toolset } from "../Toolset.js";
 // A toolset without tools yet registers nothing.
 const toolsets = {
   lookup: LookupTools,
-  lists: Layer.empty,
+  lists: ListsTools,
   register: Layer.empty,
   manage: Layer.empty,
   advanced: Layer.empty,

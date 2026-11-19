@@ -14,3 +14,9 @@ export const Address = Schema.String.check(
 export const Addresses = Schema.Array(Address)
   .check(Schema.isMinLength(1), Schema.isMaxLength(50))
   .annotate({ description: "1 to 50 Ethereum addresses" });
+
+/** An Ethereum address, or an ENS name standing for the address it resolves to. */
+export const AddressOrName = Schema.String.check(Schema.isMinLength(1)).annotate({
+  description: "Ethereum address (0x…) or an ENS name resolving to one, e.g. nick.eth",
+  examples: ["0xb8c2C29ee19D8307cb7255e1Cd9CbDE883A267d5", "nick.eth"],
+});
