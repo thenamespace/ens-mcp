@@ -1,0 +1,17 @@
+{
+  "name": "@ens-mcp/test-unit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Network-free unit tests of every package (not published)",
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint -c ../../.config/oxlint.config.ts --deny-warnings .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@thenamespace/ens-mcp": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:"
+  }
+}
