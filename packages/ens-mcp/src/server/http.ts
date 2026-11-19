@@ -6,6 +6,7 @@ import { Effect, Layer } from "effect";
 import { McpServer } from "effect/ai";
 import { HttpRouter, HttpServerResponse } from "effect/http";
 
+import { Ens } from "../ens/Ens.js";
 import { PackageInfo } from "../PackageInfo.js";
 import type { Toolset } from "../Toolset.js";
 import { serverOptions } from "./options.js";
@@ -25,8 +26,15 @@ export const HttpServer = (options: {
   const Mcp = Layer.unwrap(
     Effect.gen(function* () {
       const { version } = yield* PackageInfo;
+      const ens = yield* Ens;
+      const server = serverOptions({
+        version,
+        chain: ens.chain,
+        toolsets: options.toolsets,
+        hasIndexer: ens.hasIndexer,
+      });
       return McpServer.layerHttp({
-        ...serverOptions(version),
+        ...server,
         path: "/mcp",
         allowedOrigins: options.allowedOrigins,
         registrations: registrations(options.toolsets),
