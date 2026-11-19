@@ -203,6 +203,9 @@ catalogs:
     effect:
       specifier: 4.1.4
       version: 4.1.4
+    fflate:
+      specifier: 0.8.3
+      version: 0.8.3
     klarity:
       specifier: 0.3.0
       version: 0.3.0
@@ -304,6 +307,9 @@ importers:
       effect:
         specifier: 'catalog:'
         version: 4.1.4
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.3
       viem:
         specifier: 'catalog:'
         version: 2.57.20(typescript@7.0.2)

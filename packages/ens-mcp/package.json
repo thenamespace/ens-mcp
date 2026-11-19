@@ -52,6 +52,7 @@
     "@effect/platform-node": "catalog:",
     "@ensforge/sdk": "catalog:",
     "effect": "catalog:",
+    "fflate": "catalog:",
     "viem": "catalog:"
   },
   "devDependencies": {

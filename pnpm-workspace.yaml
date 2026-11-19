@@ -15,6 +15,7 @@ catalog:
   "@ensforge/sdk": "1.0.1"
   "@types/node": "26.6.6"
   effect: "4.1.4"
+  fflate: "0.8.3"
   klarity: "0.3.0"
   lefthook: "2.2.2"
   oxfmt: "0.78.0"
