@@ -122,6 +122,46 @@ These work offline.
 | `convert_coin_type`    | A coin's symbol, coin type and EVM chain ID                         |
 | `convert_content_hash` | A content hash URI, its encoded record value and a gateway URL      |
 
+## Resources
+
+Clients can attach these as context. Name resources come with the `lookup` toolset; subnames,
+history and an address's names need `lists`. `{name}` completes from the indexer.
+
+| URI                          | Content                                                           |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `ens://name/{name}`          | A name's profile, as `get_profile`                                |
+| `ens://name/{name}/details`  | A name's state, as `get_name_details`                             |
+| `ens://name/{name}/subnames` | The first page of a name's subnames                               |
+| `ens://name/{name}/history`  | A name's latest history events                                    |
+| `ens://address/{address}`    | An address's primary name, avatar and names                       |
+| `ens://chain`                | The server's chain, ENS contract addresses and indexer            |
+| `ens://errors`               | Every error code the tools return, with its meaning and next step |
+| `ens://errors/{code}`        | One error code                                                    |
+| `ens://records`              | Standard text record keys, common coin types, content hash types  |
+
+## Prompts
+
+Each prompt walks the model through one workflow with the tools, and is offered only when the
+toolsets it uses are enabled.
+
+| Prompt                     | Workflow                                                     | Toolsets            |
+| -------------------------- | ------------------------------------------------------------ | ------------------- |
+| `register_a_name`          | Check a `.eth` name, explain its cost, prepare registration  | `register`          |
+| `renew_expiring_names`     | Find an address's names expiring soon and renew chosen ones  | `register`, `lists` |
+| `set_up_profile`           | Review a name's profile and prepare the missing records      | `manage`            |
+| `create_subnames_for_team` | Give each member a subname pointing at their address         | `manage`            |
+| `migrate_to_ensv2`         | Check whether a name can move to ENSv2 and prepare it        | `advanced`          |
+| `audit_name`               | Review who controls a name: expiry, control, resolver, fuses | `lookup`            |
+| `portfolio_review`         | Review an address's names and recommend renewals and fixes   | `lookup`, `lists`   |
+| `explain_ens_error`        | Explain an error code and how to fix it                      | any                 |
+
+## Skill
+
+The server serves the `ens` [Agent Skill](https://agentskills.io) at `skill://ens/SKILL.md`: how
+ENS works (names, records, ownership, registration, prepared writes, safety) and which tool fits
+which task. Clients without skill support can read the same files as resources. The source is
+[`skills/ens`](https://github.com/thenamespace/ens-mcp/tree/main/skills/ens).
+
 ## License
 
 Apache-2.0

@@ -12,4 +12,7 @@ registrations, renewals, record, primary name, subname, transfer and resolver ch
 user's own wallet, with simulation, cost and unsigned calls, and follow a plan from its
 transaction hashes as the user signs it; `advanced` covers wrapping, fuses, ENSv2 roles, record
 access, approvals, migration to ENSv2 and DNS names; `utils` normalises names and
-converts coin types and content hashes. The server never signs or sends transactions.
+converts coin types and content hashes. Resources expose names, addresses, the chain's contracts,
+error codes and record keys as context; prompts walk through registration, profiles, renewals,
+team subnames, migration, audits and portfolio reviews; and the `ens` Agent Skill is served at
+`skill://ens/SKILL.md`. The server never signs or sends transactions.
