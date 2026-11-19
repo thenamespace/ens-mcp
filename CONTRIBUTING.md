@@ -29,6 +29,7 @@ compiler and the configs in `.config/`.
 ## Repository structure
 
 ```text
+docs/       User documentation, linked from the README
 packages/   Publishable packages (@thenamespace/ens-mcp)
 tests/      Test suites; unit tests in tests/unit/<package>
 tools/cli/  ens-mcp-dev: package builds and checks

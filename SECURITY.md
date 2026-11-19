@@ -20,6 +20,11 @@ releases and prereleases do not receive guaranteed backports.
 
 ## Scope
 
+ens-mcp prepares transactions for the user's own wallet and never signs or sends them; it holds
+no keys. The hosted server at `https://ens-mcp.namespace.ninja/mcp` is open, rate limited per IP,
+and reads ENS through the Namespace RPC proxy; [docs/self-hosting.md](docs/self-hosting.md)
+describes what it logs.
+
 Reports about tool input handling, prompt injection through ENS data (records, profiles and other
 text a tool returns to an assistant), the HTTP transport, authentication, request forwarding to
 RPCs and indexers, dependency integrity and package publishing are welcome. Documentation that

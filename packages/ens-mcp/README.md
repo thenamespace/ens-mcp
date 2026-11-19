@@ -1,189 +1,82 @@
-# `@thenamespace/ens-mcp`
+# ENS MCP Server
 
-A [Model Context Protocol](https://modelcontextprotocol.io) server for ENS (Ethereum Name Service).
+[![Install in Cursor](https://img.shields.io/badge/Install_in-Cursor-000000?style=flat-square&logoColor=white)](https://cursor.com/en/install-mcp?name=ens&config=eyJuYW1lIjoiZW5zIiwidHlwZSI6Imh0dHAiLCJ1cmwiOiJodHRwczovL2Vucy1tY3AubmFtZXNwYWNlLm5pbmphL21jcCJ9)
+[![Install in VS Code](https://img.shields.io/badge/Install_in-VS_Code-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=ens&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fens-mcp.namespace.ninja%2Fmcp%22%7D)
+[![npm version](https://img.shields.io/npm/v/@thenamespace/ens-mcp?style=flat-square)](https://www.npmjs.com/package/@thenamespace/ens-mcp)
 
-Version 0.1.0 is in development.
+Give your AI assistant native access to ENS, the Ethereum Name Service. Resolve names, read
+profiles and records, see who controls a name, browse the names an address holds, check prices,
+and prepare registrations and changes for your own wallet, all through natural language.
 
-## Hosted server
+The server never signs or sends transactions: it prepares and simulates them, and you sign.
 
-Connect any MCP client that speaks Streamable HTTP to `https://ens-mcp.namespace.ninja/mcp`; no
-sign-in is needed. For Claude Code:
+## Installation
 
-```sh
+Use the hosted server, no install needed:
+
+```
+https://ens-mcp.namespace.ninja/mcp
+```
+
+```bash
 claude mcp add --transport http ens https://ens-mcp.namespace.ninja/mcp
 ```
 
-It reads mainnet with the `lookup`, `lists`, `register`, `manage` and `utils` toolsets and allows
-60 requests per minute from each IP address. For `advanced`, Sepolia or your own RPC, run the
-server yourself.
+Or run this package as a local server over stdio. It needs Node.js 26 or later:
 
-## Run
-
-```sh
-npx -y @thenamespace/ens-mcp               # stdio, for local MCP clients
-npx -y @thenamespace/ens-mcp --http        # Streamable HTTP at http://127.0.0.1:8080/mcp
+```json
+{
+  "mcpServers": {
+    "ens": {
+      "command": "npx",
+      "args": ["-y", "@thenamespace/ens-mcp"],
+      "env": { "ENS_MCP_RPC_URL": "https://your-rpc.example" }
+    }
+  }
+}
 ```
 
-| Flag                | Environment variable      | Default                       |
-| ------------------- | ------------------------- | ----------------------------- |
-| `--http`            |                           | stdio                         |
-| `--host`            | `HOST`                    | `127.0.0.1`                   |
-| `--port`            | `PORT`                    | `8080`                        |
-| `--allowed-origins` | `ENS_MCP_ALLOWED_ORIGINS` | none                          |
-| `--rate-limit`      | `ENS_MCP_RATE_LIMIT`      | unlimited                     |
-| `--proxy-hops`      | `ENS_MCP_PROXY_HOPS`      | `0`                           |
-| `--chain`           | `ENS_MCP_CHAIN`           | `mainnet`                     |
-| `--rpc-url`         | `ENS_MCP_RPC_URL`         | a public RPC                  |
-| `--require-rpc`     | `ENS_MCP_REQUIRE_RPC`     | `false`                       |
-| `--indexer`         | `ENS_MCP_INDEXER`         | `bigname`                     |
-| `--toolsets`        | `ENS_MCP_TOOLSETS`        | `lookup,lists,register,utils` |
+Setup for Cursor, VS Code, Codex, Gemini CLI, Windsurf, Zed and more is in the
+[repository README](https://github.com/thenamespace/ens-mcp#installation).
 
-- `--allowed-origins` takes a comma-separated list of browser origins allowed to call `/mcp`, or
-  `*` for any, and answers their CORS requests. Clients that send no `Origin` header, such as
-  desktop and command-line clients, are always allowed.
-- `--rate-limit` caps the requests each client IP sends to `/mcp`, such as `60/min` (`s`, `min` or
-  `h`); over it, the server answers 429 with `Retry-After`. Each server process counts on its own.
-- `--proxy-hops` is the number of `X-Forwarded-For` entries your proxies append, so the rate limit
-  counts per client rather than per proxy: 1 behind a single proxy such as Cloud Run. Entries the
-  client sent itself are never trusted.
-- `--chain` is the chain the server reads ENS from: `mainnet` or `sepolia`. Run a second server
-  for the other chain.
-- `--rpc-url` is the RPC for that chain. Public RPCs are rate limited; set one for regular use.
-  `--require-rpc` makes the server refuse to start without one.
-- `--indexer` reads name lists and history from [bigname](https://bigname.sh); on mainnet,
-  goldsky answers when bigname cannot, including every Basenames query. `none` turns off the
-  tools that list and search names.
-- `--toolsets` takes a comma-separated list of toolsets to enable, or `all`.
-- With `--http`, `GET /` describes the server and `GET /healthz` answers probes. Request bodies
-  are capped at 1 MiB.
+| Variable           | Description                                   | Default                       |
+| ------------------ | --------------------------------------------- | ----------------------------- |
+| `ENS_MCP_RPC_URL`  | RPC URL for the chain                         | a public RPC                  |
+| `ENS_MCP_CHAIN`    | `mainnet` or `sepolia`                        | `mainnet`                     |
+| `ENS_MCP_TOOLSETS` | Toolsets to enable, comma-separated, or `all` | `lookup,lists,register,utils` |
 
-## Tools
+`npx -y @thenamespace/ens-mcp --http` serves Streamable HTTP at `http://127.0.0.1:8080/mcp`. Every
+flag, rate limits and Docker:
+[self-hosting](https://github.com/thenamespace/ens-mcp/blob/main/docs/self-hosting.md).
 
-Record values (text records, descriptions, avatars) are set by each name's owner; the server strips
-characters that hide or reorder text and cuts very long values.
+## 💬 Example questions
 
-### `lookup`
+```markdown
+> Who owns vitalik.eth, and when does it expire?
+> Give me the ETH address and Twitter handle for nick.eth.
+> Which ENS names does vitalik.eth hold, and which expire in the next 90 days?
+> Is coolname.eth available? How much is it for 2 years?
+> Register coolname.eth for 1 year for my wallet and set it as my primary name.
+> I sent the commit transaction, here's the hash. What now?
+```
 
-| Tool               | Answers                                                                     |
-| ------------------ | --------------------------------------------------------------------------- |
-| `resolve_name`     | The address of up to 50 names, for ETH or any other coin                    |
-| `get_primary_name` | The verified primary name of up to 50 addresses, on mainnet or an L2        |
-| `get_profile`      | A name's common text records, addresses, content hash and avatar URL        |
-| `get_records`      | Exactly the records asked for: texts, coins, content hash, ABI, key, data   |
-| `get_name_details` | Status, owner, manager, resolver, expiry and grace period; fuses, migration |
-| `get_permissions`  | What one account may do with a name, its burned fuses and ENSv2 roles       |
+## Available tools
 
-### `lists`
+| Toolset    | For                                                                    | Default |
+| ---------- | ---------------------------------------------------------------------- | :-----: |
+| `lookup`   | Addresses, primary names, profiles, records, ownership and permissions |   yes   |
+| `lists`    | Searching names, names by address, subnames, history, expiring names   |   yes   |
+| `register` | Availability, prices, preparing registrations and renewals             |   yes   |
+| `manage`   | Preparing records, primary names, subnames, transfers and resolvers    |         |
+| `advanced` | Preparing wrapping, fuses, ENSv2 roles, migration and DNS names        |         |
+| `utils`    | Offline: normalising names, coin types, content hashes                 |   yes   |
 
-These read from the indexer, which can lag the chain by a few blocks. Results come in pages: pass
-`cursor` back for the next one. Set `namespace` to `basenames` for `*.base.eth` names.
-
-| Tool                     | Answers                                                               |
-| ------------------------ | --------------------------------------------------------------------- |
-| `search_names`           | Names whose labels start with, or contain, some text                  |
-| `list_names_for_address` | Names an address owns, manages, holds roles on, or that resolve to it |
-| `list_subnames`          | The direct subnames of a name                                         |
-| `get_name_history`       | Registrations, renewals, transfers, record changes, with summaries    |
-| `list_expiring_names`    | Names expiring soon, overall, under a parent or for one address       |
-| `get_indexer_status`     | Whether the indexer is ready and how far it lags the chain            |
-
-### `register` and `manage`
-
-Write tools prepare transactions for the user's own wallet; the server never signs or sends
-anything. Each returns a summary, whether the checked steps would succeed (and why not), what the
-account needs (such as a USDC balance), the cost, plain signing instructions, the unsigned calls and
-a plan handle. After the user signs, `get_plan_status` follows the plan from the transaction hashes:
-each step's state, the registration commitment's window, whether the next step would succeed now,
-and what to do next. Registrations and renewals are paid in USDC by default, or DAI;
-registering takes two signatures at least a minute apart.
-
-| Tool                 | Answers or prepares                                                  |
-| -------------------- | -------------------------------------------------------------------- |
-| `check_availability` | Whether up to 50 names can be registered, with prices                |
-| `get_price`          | Registration or renewal price of names for a duration                |
-| `register_name`      | Registering names, with records and the primary name                 |
-| `renew_names`        | Renewing names                                                       |
-| `set_records`        | Setting or deleting text records, addresses and the content hash     |
-| `set_primary_name`   | Setting an account's primary name, on mainnet or an L2               |
-| `create_subname`     | Creating a subname with its owner, records, resolver and permissions |
-| `update_subname`     | Changing a subname's owner, resolver or expiry                       |
-| `remove_subname`     | Removing a subname                                                   |
-| `transfer_name`      | Transferring a name                                                  |
-| `set_resolver`       | Changing a name's resolver                                           |
-| `get_plan`           | Reading a prepared plan back from its handle, optionally re-checked  |
-| `get_plan_status`    | Following a plan the user is signing, from its transaction hashes    |
-
-`register` is on by default; `manage` is enabled with `--toolsets`. The plan tools come with any
-toolset that prepares writes.
-
-### `advanced`
-
-Enabled with `--toolsets`. Also prepare-only.
-
-| Tool                   | Answers or prepares                                                   |
-| ---------------------- | --------------------------------------------------------------------- |
-| `wrap_name`            | Wrapping an ENSv1 name in the NameWrapper, optionally burning fuses   |
-| `unwrap_name`          | Unwrapping a wrapped name                                             |
-| `set_fuses`            | Burning NameWrapper fuses, on a name or as the parent on a subname    |
-| `grant_roles`          | Granting ENSv2 roles on a name or its resolver                        |
-| `revoke_roles`         | Revoking ENSv2 roles                                                  |
-| `set_record_access`    | Letting an account edit some or all of an ENSv2 name's records        |
-| `set_approval`         | Approving or revoking an operator, a name's delegate or a token       |
-| `get_migration_status` | Whether an ENSv1 name can move to ENSv2, what blocks it, what carries |
-| `migrate_name`         | Moving ENSv1 names to ENSv2, with their records and subnames          |
-| `get_dns_status`       | Whether a DNS name is in ENS, and the TXT record to add               |
-| `claim_dns_name`       | Claiming a DNS name into ENS with its DNSSEC proof                    |
-
-### `utils`
-
-These work offline.
-
-| Tool                   | Answers                                                             |
-| ---------------------- | ------------------------------------------------------------------- |
-| `normalize_name`       | Normalised form (ENSIP-15), labels, namehash and labelhash of names |
-| `convert_coin_type`    | A coin's symbol, coin type and EVM chain ID                         |
-| `convert_content_hash` | A content hash URI, its encoded record value and a gateway URL      |
-
-## Resources
-
-Clients can attach these as context. Name resources come with the `lookup` toolset; subnames,
-history and an address's names need `lists`. `{name}` completes from the indexer.
-
-| URI                          | Content                                                           |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `ens://name/{name}`          | A name's profile, as `get_profile`                                |
-| `ens://name/{name}/details`  | A name's state, as `get_name_details`                             |
-| `ens://name/{name}/subnames` | The first page of a name's subnames                               |
-| `ens://name/{name}/history`  | A name's latest history events                                    |
-| `ens://address/{address}`    | An address's primary name, avatar and names                       |
-| `ens://chain`                | The server's chain, ENS contract addresses and indexer            |
-| `ens://errors`               | Every error code the tools return, with its meaning and next step |
-| `ens://errors/{code}`        | One error code                                                    |
-| `ens://records`              | Standard text record keys, common coin types, content hash types  |
-
-## Prompts
-
-Each prompt walks the model through one workflow with the tools, and is offered only when the
-toolsets it uses are enabled.
-
-| Prompt                     | Workflow                                                     | Toolsets            |
-| -------------------------- | ------------------------------------------------------------ | ------------------- |
-| `register_a_name`          | Check a `.eth` name, explain its cost, prepare registration  | `register`          |
-| `renew_expiring_names`     | Find an address's names expiring soon and renew chosen ones  | `register`, `lists` |
-| `set_up_profile`           | Review a name's profile and prepare the missing records      | `manage`            |
-| `create_subnames_for_team` | Give each member a subname pointing at their address         | `manage`            |
-| `migrate_to_ensv2`         | Check whether a name can move to ENSv2 and prepare it        | `advanced`          |
-| `audit_name`               | Review who controls a name: expiry, control, resolver, fuses | `lookup`            |
-| `portfolio_review`         | Review an address's names and recommend renewals and fixes   | `lookup`, `lists`   |
-| `explain_ens_error`        | Explain an error code and how to fix it                      | any                 |
-
-## Skill
-
-The server serves the `ens` [Agent Skill](https://agentskills.io) at `skill://ens/SKILL.md`: how
-ENS works (names, records, ownership, registration, prepared writes, safety) and which tool fits
-which task. Clients without skill support can read the same files as resources. The source is
-[`skills/ens`](https://github.com/thenamespace/ens-mcp/tree/main/skills/ens).
+The server also offers resources, workflow prompts and an `ens` agent skill. Every tool:
+[docs/tools.md](https://github.com/thenamespace/ens-mcp/blob/main/docs/tools.md). How prepared
+transactions work:
+[docs/transactions.md](https://github.com/thenamespace/ens-mcp/blob/main/docs/transactions.md).
 
 ## License
 
-Apache-2.0
+[Apache-2.0](https://github.com/thenamespace/ens-mcp/blob/main/LICENSE). Built with ❤️ by
+[Namespace](https://namespace.ninja/) Ninjas 🥷
