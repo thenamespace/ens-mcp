@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Config, Effect, Layer } from "effect";
+import { Config, Effect, Layer, Schema } from "effect";
 
 import { Ens } from "@thenamespace/ens-mcp/internal/ens/Ens";
 
@@ -109,6 +109,48 @@ describe.skipIf(!live)("live mainnet (ENS_MCP_LIVE=1)", () => {
           items: [{ type: "registration", summary: expect.stringContaining("Registered") }],
         });
         expect(status.structuredContent).toMatchObject({ status: "ready" });
+      }).pipe(Effect.scoped),
+    60_000,
+  );
+
+  it.live(
+    "prepares a write, follows its plan and explains migration and DNS state",
+    () =>
+      Effect.gen(function* () {
+        const client = yield* mcpClient({ ens: MainnetEns, toolsets: ["manage", "advanced"] });
+
+        const prepared = yield* client.callTool({
+          name: "set_records",
+          arguments: {
+            name: "nick.eth",
+            account: "nick.eth",
+            texts: { url: "https://ens.domains" },
+          },
+        });
+        expect(prepared.structuredContent).toMatchObject({ willSucceed: true, issues: [] });
+
+        const { plan } = yield* Schema.decodeUnknownEffect(Schema.Struct({ plan: Schema.String }))(
+          prepared.structuredContent,
+        );
+        const [status, migration, dns] = yield* Effect.all(
+          [
+            client.callTool({ name: "get_plan_status", arguments: { plan } }),
+            client.callTool({ name: "get_migration_status", arguments: { name: "vitalik.eth" } }),
+            client.callTool({ name: "get_dns_status", arguments: { name: "example.com" } }),
+          ],
+          { concurrency: "unbounded" },
+        );
+
+        expect(status.structuredContent).toMatchObject({
+          steps: [{ state: "ready" }],
+          next: "Sign step 1 (1 call) now.",
+          done: false,
+        });
+        expect(migration.structuredContent).toMatchObject({
+          status: "eligible",
+          route: "unwrapped",
+        });
+        expect(dns.structuredContent).toMatchObject({ imported: false, action: "set-txt-record" });
       }).pipe(Effect.scoped),
     60_000,
   );

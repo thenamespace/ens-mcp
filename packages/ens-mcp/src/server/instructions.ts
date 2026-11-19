@@ -18,7 +18,10 @@ const toolsetGuides: Readonly<Record<Toolset, string | undefined>> = {
   manage:
     "- Manage: set_records, set_primary_name, create_subname, update_subname, remove_subname, " +
     "transfer_name, set_resolver.",
-  advanced: undefined,
+  advanced:
+    "- Advanced: wrap_name, unwrap_name, set_fuses (permanent), grant_roles, revoke_roles, " +
+    "set_record_access, set_approval, get_migration_status, migrate_name (ENSv1 to ENSv2, " +
+    "one-way), get_dns_status, claim_dns_name.",
   utils:
     "- Utilities, offline: normalize_name (validity and hashes), convert_coin_type, " +
     "convert_content_hash.",
@@ -53,7 +56,8 @@ export const instructions = (options: {
       "- Errors carry a code and a hint with the next step.",
       "- The server never signs or sends transactions. Write tools prepare them for the user's own " +
         "wallet: show the summary, issues, requirements and signing steps before the calls, and " +
-        "keep the plan handle for get_plan.",
+        "keep the plan handle. After the user signs, call get_plan_status with the transaction " +
+        "hashes to see what to do next.",
     ],
     "\n",
   );

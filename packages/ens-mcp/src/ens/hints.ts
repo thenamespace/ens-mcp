@@ -45,6 +45,46 @@ export const hints: NonNullable<Errors.DescribeOptions["messages"]> = {
   }),
   DURATION_TOO_SHORT: () => ({ action: "Register for at least 28 days." }),
   PLAN_INVALID: () => ({ action: "Pass the plan handle exactly as a prepare tool returned it." }),
+  PLAN_CHAIN_MISMATCH: () => ({
+    action: "Use a server for the plan's chain (--chain), or prepare the write again here.",
+  }),
+  CANNOT_GRANT_ROLES: () => ({
+    action:
+      "Granting or revoking a role needs its Admin role; get_permissions shows the account's roles.",
+  }),
+  UNSUPPORTED_PROTOCOL: () => ({
+    action:
+      "get_name_details shows the name's ENS version: wrapping and fuses are ENSv1 only, roles " +
+      "and record access ENSv2 only.",
+  }),
+  ALREADY_MIGRATED: () => ({ action: "The name is on ENSv2 already; nothing to migrate." }),
+  NAME_REQUIRES_MIGRATION: () => ({
+    action: "Move the name to ENSv2 first; get_migration_status explains how.",
+  }),
+  PARENT_NOT_MIGRATED: () => ({
+    action: "Migrate the parent name first; get_migration_status shows its state.",
+  }),
+  NOT_ELIGIBLE: () => ({ action: "get_migration_status explains what blocks the migration." }),
+  FUSE_BURNED: () => ({
+    action: "A burned fuse forbids this, permanently; get_permissions lists the burned fuses.",
+  }),
+  NAME_NOT_WRAPPED: () => ({ action: "The name is not wrapped; wrap it with wrap_name first." }),
+  NAME_WRAPPED: () => ({ action: "The name is wrapped; unwrap it with unwrap_name first." }),
+  NOT_APPROVED: () => ({
+    action: "The account must hold the name or be approved for it; see set_approval.",
+  }),
+  DNS_RECORD_MISSING: () => ({
+    action: "get_dns_status gives the TXT record to add at the DNS provider.",
+  }),
+  DNSSEC_PROOF_FAILED: () => ({
+    action: "Turn on DNSSEC at the DNS provider; get_dns_status shows the name's DNS state.",
+  }),
+  COMMITMENT_TOO_NEW: () => ({
+    action: "Wait until the commitment is a minute old; get_plan_status shows when.",
+  }),
+  COMMITMENT_TOO_OLD: () => ({
+    action: "The commitment expired; prepare the registration again with register_name.",
+  }),
   RESOLVER_NOT_FOUND: (error) => ({
     action: `${error.context.name ?? "The name"} has no resolver yet; set one with set_resolver.`,
   }),
