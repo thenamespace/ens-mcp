@@ -8,9 +8,10 @@ import { fromUnixSeconds } from "../../../schemas/Timestamp.js";
 
 type Data = IndexedEvent["data"];
 
+// Event data repeats what owners set (record keys and values), so text is cleaned as records are.
 const text = (data: Data, key: string): string | undefined => {
   const value = data?.[key];
-  return Predicate.isString(value) ? value : undefined;
+  return Predicate.isString(value) ? cleanRecordText(value) : undefined;
 };
 
 // Indexers report lowercase addresses, alone or as `{ chainId, address }`.
@@ -63,9 +64,9 @@ export const summarizeEvent = (event: IndexedEvent): string => {
       return `Moved to ENSv2${optional(" via ", text(data, "migrationPath"))}`;
     case "record_changed": {
       const value = text(data, "value");
-      return `Record ${text(data, "key") ?? "changed"}${value === undefined ? " changed" : ` set to "${cleanRecordText(value)}"`}`;
+      return `Record ${text(data, "key") ?? "changed"}${value === undefined ? " changed" : ` set to "${value}"`}`;
     }
     default:
-      return humanize(event.action ?? event.type);
+      return humanize(cleanRecordText(event.action ?? event.type));
   }
 };

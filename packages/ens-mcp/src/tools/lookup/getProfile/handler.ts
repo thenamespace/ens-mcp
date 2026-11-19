@@ -59,9 +59,11 @@ export const getProfile = (ens: Ens["Service"]) =>
         : {
             contentHash: { protocol: records.contentHash.protocol, uri: records.contentHash.uri },
           }),
-      ...Option.match(Option.flatMap(avatarUrl, Option.fromNullishOr), {
-        onNone: () => ({}),
-        onSome: (url) => ({ avatarUrl: url }),
-      }),
+      // The URL comes from the owner's record or NFT metadata: a long `data:` image is left out
+      // rather than cut into an unusable URL.
+      ...Option.match(
+        Option.filter(Option.flatMap(avatarUrl, Option.fromNullishOr), (url) => url.length <= 2000),
+        { onNone: () => ({}), onSome: (url) => ({ avatarUrl: cleanRecordText(url) }) },
+      ),
     };
   });

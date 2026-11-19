@@ -20,10 +20,10 @@ export const SetRecordAccess = Tool.make("set_record_access", {
     name: Name,
     account: Account,
     grantee: AddressOrName.annotate({ description: "Who gets the access: an address or ENS name" }),
-    texts: Schema.optionalKey(Schema.Array(TextKey)).annotate({
+    texts: Schema.optionalKey(Schema.Array(TextKey).check(Schema.isMaxLength(50))).annotate({
       description: "Text record keys, e.g. avatar, url",
     }),
-    coins: Schema.optionalKey(Schema.Array(Coin)).annotate({
+    coins: Schema.optionalKey(Schema.Array(Coin).check(Schema.isMaxLength(50))).annotate({
       description: "Address records by coin, e.g. eth, btc",
     }),
     contentHash: Schema.optionalKey(Schema.Boolean).annotate({

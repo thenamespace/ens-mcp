@@ -12,8 +12,8 @@ import { ReadsEns } from "../../annotations.js";
 
 const Selection = Schema.Struct({
   name: Name,
-  texts: Schema.optionalKey(Schema.Array(TextKey)),
-  coins: Schema.optionalKey(Schema.Array(Coin)).annotate({
+  texts: Schema.optionalKey(Schema.Array(TextKey).check(Schema.isMaxLength(50))),
+  coins: Schema.optionalKey(Schema.Array(Coin).check(Schema.isMaxLength(50))).annotate({
     description: "Coins whose addresses to read, e.g. ['eth', 'sol']",
   }),
   contentHash: Schema.optionalKey(Schema.Boolean).annotate({
@@ -25,10 +25,12 @@ const Selection = Schema.Struct({
   pubkey: Schema.optionalKey(Schema.Boolean).annotate({
     description: "Read the SECP256k1 public key record",
   }),
-  interfaces: Schema.optionalKey(Schema.Array(InterfaceId)).annotate({
+  interfaces: Schema.optionalKey(Schema.Array(InterfaceId).check(Schema.isMaxLength(50))).annotate({
     description: "ERC-165 interface IDs whose implementer addresses to read",
   }),
-  data: Schema.optionalKey(Schema.Array(Schema.String)).annotate({
+  data: Schema.optionalKey(
+    Schema.Array(Schema.String.check(Schema.isMaxLength(256))).check(Schema.isMaxLength(50)),
+  ).annotate({
     description: "Data record keys (ENSIP-24) to read",
   }),
 }).check(

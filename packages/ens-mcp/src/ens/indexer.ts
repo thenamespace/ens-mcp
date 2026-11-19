@@ -3,6 +3,7 @@ import { Array as Arr, type DateTime } from "effect";
 import type { IndexedName, Page } from "@ensforge/sdk/indexer";
 
 import { daysUntil, fromUnixSeconds } from "../schemas/Timestamp.js";
+import { cleanRecordText } from "./recordText.js";
 
 /** The indexer paging options for the list tools' `limit` and `cursor` parameters. */
 export const pageOptions = (params: {
@@ -32,7 +33,8 @@ export const toListPage = <A, B>(page: Page<A>, toItem: (item: A) => B) => ({
 
 /** A name from an indexer in the list tools' `ListedName` shape. */
 export const toListedName = (item: IndexedName, now: DateTime.DateTime) => ({
-  name: item.name,
+  // Labels are chosen by whoever registers them and may not be normalised.
+  name: cleanRecordText(item.name),
   status: item.status ?? "unregistered",
   owner: item.owner,
   ...(item.manager === null || item.manager === item.owner ? {} : { manager: item.manager }),
