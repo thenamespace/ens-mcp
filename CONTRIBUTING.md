@@ -113,7 +113,7 @@ repository secrets `WORKLOAD_IDENTITY_PROVIDER` and `REPOSITORY_DISPATCH_PAT`.
 ### Hosted server
 
 The image is the hosted server's configuration: the `Dockerfile` command sets the toolsets, the
-Namespace RPC proxy, any origin, 60 requests per minute per IP and one proxy hop. It runs on the
+Namespace RPC proxy, any origin, 60 requests per minute per IP, one proxy hop and `--log-level warn`. It runs on the
 production GKE cluster from `applications/apps/core/ens-mcp` in `thenamespace/infra` (the shared
 `thenamespace/helm` chart, behind Traefik), which needs no environment variables, only:
 
