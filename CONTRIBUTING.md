@@ -101,8 +101,9 @@ Check workflow changes locally with
 `docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12` and
 `docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/zizmorcore/zizmor:1.32.0 --config .github/zizmor.yml .`.
 
-`deploy.yml` needs the `prod` environment with the secrets `GCP_REGION`, `GCP_PROJECT_ID`,
-`GCP_WORKLOAD_IDENTITY_PROVIDER` and `REPOSITORY_DISPATCH_PAT`.
+`deploy.yml` pushes to Artifact Registry in project `prod-9427` (`europe-west3`), tagging the image
+with the short commit SHA and `latest`, then sends that tag to `thenamespace/infra`. It needs the
+repository secrets `WORKLOAD_IDENTITY_PROVIDER` and `REPOSITORY_DISPATCH_PAT`.
 
 ## Changesets
 
