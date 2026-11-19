@@ -49,13 +49,17 @@ CI runs the same (`pnpm check`, then `pnpm pack:check`) and builds the Docker im
 `pnpm check` covers formatting (Oxfmt), linting (Oxlint with the Effect presets), type checking,
 builds and tests. `pnpm pack:check` validates package metadata and exports.
 
-| Command          | Runs                                        |
-| ---------------- | ------------------------------------------- |
-| `pnpm check`     | format check, lint, typecheck, build, tests |
-| `pnpm format`    | format the workspace                        |
-| `pnpm lint:fix`  | apply lint fixes                            |
-| `pnpm test`      | unit tests                                  |
-| `pnpm changeset` | record a release note for a package change  |
+| Command                        | Runs                                                    |
+| ------------------------------ | ------------------------------------------------------- |
+| `pnpm check`                   | format check, lint, typecheck, build, tests             |
+| `pnpm format`                  | format the workspace                                    |
+| `pnpm lint:fix`                | apply lint fixes                                        |
+| `pnpm test`                    | unit tests                                              |
+| `pnpm changeset`               | record a release note for a package change              |
+| `pnpm exec ens-mcp-dev tokens` | context the built server takes in a client, per toolset |
+
+Live tests read mainnet through a real RPC and the indexer; run them with
+`ENS_MCP_LIVE=1 pnpm test` (and `ENS_MCP_RPC_URL` to avoid public RPC limits).
 
 ## Tests
 

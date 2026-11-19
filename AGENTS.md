@@ -65,6 +65,21 @@ Oxfmt does not insert logical blank lines; review grouping explicitly when writi
 - Use brief comments for non-obvious constraints, ordering or lifecycle decisions. Avoid comments
   that repeat the code and section banners.
 
+## Tools
+
+- One folder per tool under its toolset, `src/tools/<toolset>/<tool>/`: `tool.ts` defines what
+  clients see (`Tool.make` with Schema parameters and results, title, `ReadsEns` or `Computes`
+  hints, `failure: EnsToolError`, `failureMode: "return"`); `handler.ts` implements it with an
+  explicit `Effect.fn.Return`. The toolset's `index.ts` builds the toolkit layer.
+- Reuse the schemas in `src/schemas/` for parameters and results; add a schema there when a second
+  tool needs it.
+- Descriptions, in order: what it answers, an example question, when another tool fits better,
+  what comes back, and notes (indexer lag, record values set by the name's owner).
+- Call ensforge through `runEns` (retries, `EnsToolError`); batch items fail with `ItemError`
+  without failing the call. Missing records are `null`, not errors.
+- Clean record text set by name owners with `cleanRecordText`.
+- When a tool is added, update the toolset's line in `src/server/instructions.ts` and the README.
+
 ## Tests
 
 - All tests live under `tests/`, run through `@effect/vitest` only; do not import `vitest`
