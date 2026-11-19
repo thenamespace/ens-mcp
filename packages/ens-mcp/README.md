@@ -30,7 +30,9 @@ npx -y @thenamespace/ens-mcp --http        # Streamable HTTP at http://127.0.0.1
   for the other chain.
 - Public RPCs are rate limited; set an RPC URL for regular use. `--require-rpc` makes the server
   refuse to start without one.
-- `--indexer none` turns off the tools that list and search names.
+- `--indexer` reads name lists and history from [bigname](https://bigname.sh); on mainnet,
+  goldsky answers when bigname cannot, including every Basenames query. `none` turns off the
+  tools that list and search names.
 - `--toolsets` takes a comma-separated list of toolsets to enable, or `all`.
 
 ## Tools
@@ -48,6 +50,20 @@ characters that hide or reorder text and cuts very long values.
 | `get_records`      | Exactly the records asked for: texts, coins, content hash, ABI, key, data   |
 | `get_name_details` | Status, owner, manager, resolver, expiry and grace period; fuses, migration |
 | `get_permissions`  | What one account may do with a name, its burned fuses and ENSv2 roles       |
+
+### `lists`
+
+These read from the indexer, which can lag the chain by a few blocks. Results come in pages: pass
+`cursor` back for the next one. Set `namespace` to `basenames` for `*.base.eth` names.
+
+| Tool                     | Answers                                                               |
+| ------------------------ | --------------------------------------------------------------------- |
+| `search_names`           | Names whose labels start with, or contain, some text                  |
+| `list_names_for_address` | Names an address owns, manages, holds roles on, or that resolve to it |
+| `list_subnames`          | The direct subnames of a name                                         |
+| `get_name_history`       | Registrations, renewals, transfers, record changes, with summaries    |
+| `list_expiring_names`    | Names expiring soon, overall, under a parent or for one address       |
+| `get_indexer_status`     | Whether the indexer is ready and how far it lags the chain            |
 
 ### `utils`
 
