@@ -12,6 +12,7 @@ catalog:
   "@effect/platform-node": "4.1.4"
   "@effect/tsgo": "0.70.0"
   "@effect/vitest": "4.1.4"
+  "@ensforge/sdk": "1.0.1"
   "@types/node": "26.6.6"
   effect: "4.1.4"
   klarity: "0.3.0"
@@ -22,7 +23,12 @@ catalog:
   publint: "0.3.25"
   turbo: "2.11.11"
   typescript: "7.0.2"
+  viem: "2.57.20"
   vitest: "5.1.0"
 
 allowBuilds:
   lefthook: true
+
+minimumReleaseAgeExclude:
+  - "@ensforge/contracts@1.0.1"
+  - "@ensforge/sdk@1.0.1"

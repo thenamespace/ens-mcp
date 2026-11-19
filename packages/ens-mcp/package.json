@@ -50,7 +50,9 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "effect": "catalog:"
+    "@ensforge/sdk": "catalog:",
+    "effect": "catalog:",
+    "viem": "catalog:"
   },
   "devDependencies": {
     "@ens-mcp/tools": "workspace:*",

@@ -10,8 +10,10 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
+    "@ensforge/sdk": "catalog:",
     "@thenamespace/ens-mcp": "workspace:*",
     "@types/node": "catalog:",
-    "effect": "catalog:"
+    "effect": "catalog:",
+    "viem": "catalog:"
   }
 }
