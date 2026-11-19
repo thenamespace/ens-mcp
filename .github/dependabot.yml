@@ -1,0 +1,47 @@
+version: 2
+updates:
+  # Workflows reference actions by major tag; this proposes new majors, grouped weekly.
+  - package-ecosystem: github-actions
+    directories: ["/", "/.github/actions/*"]
+    schedule:
+      interval: weekly
+    # Releases at least a week old, so a compromised release is likely found before it lands.
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  # The pnpm catalog (pnpm-workspace.yaml) pins every dependency; tooling and Effect move together.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 10
+    groups:
+      effect:
+        patterns: ["effect", "@effect/*"]
+      tooling:
+        patterns:
+          - "@arethetypeswrong/*"
+          - "@changesets/*"
+          - "@commitlint/*"
+          - "@types/*"
+          - "klarity"
+          - "lefthook"
+          - "oxfmt"
+          - "oxlint*"
+          - "publint"
+          - "turbo"
+          - "typescript"
+          - "vitest"
+
+  # The server image's Node base (Dockerfile).
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

@@ -1,0 +1,50 @@
+name: Bug report
+description: A tool, resource or transport of ens-mcp does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security issues go through [private reporting](https://github.com/thenamespace/ens-mcp/security/advisories/new), not here.
+        Redact private keys, API keys and RPC URLs with credentials.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The `@thenamespace/ens-mcp` version, or the hosted server.
+      placeholder: "@thenamespace/ens-mcp 0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport
+      options:
+        - stdio
+        - Streamable HTTP
+        - Hosted server
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      description: The assistant or client and its version.
+      placeholder: Claude Desktop 1.2.3, Cursor 2.0, MCP Inspector
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The tool you called, its arguments (name, chain, address) and your server configuration.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: What you expected, what the tool returned instead, and any error or server log.
+    validations:
+      required: true
