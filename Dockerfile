@@ -1,45 +1,58 @@
-# -----------------------
-# Build stage
-# -----------------------
-FROM node:22-alpine AS build
+# syntax=docker/dockerfile:1.7
+#
+# The hosted ens-mcp server over HTTP, following Turborepo's Docker guide: `turbo prune` keeps only
+# @thenamespace/ens-mcp and the workspace packages it depends on, so the dependency layer is reused
+# until one of their manifests or the lockfile changes.
+#
+# Build from the repository root:
+#   docker build -t ens-mcp .
 
-# Install pnpm
-RUN npm install -g pnpm@9.4.0
+ARG NODE_IMAGE=docker.io/library/node:26.13.1-bookworm-slim
 
+FROM ${NODE_IMAGE} AS base
+ENV PNPM_HOME="/pnpm" \
+    PATH="/pnpm:$PATH" \
+    TURBO_TELEMETRY_DISABLED="1"
+# Node 25+ ships without corepack: the root package.json's packageManager, and the catalog's turbo.
+RUN npm install --global --no-audit --no-fund pnpm@12.21.0 turbo@2.11.11
+
+FROM base AS pruner
 WORKDIR /app
-
-# Copy root manifests
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-
-# Copy workspace package manifests (important for correct install graph)
-COPY apps/server/package.json apps/server/
-COPY packages/config/package.json packages/config/
-
-# Env
-ENV CI=true
-
-# Install dependencies
-RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# Copy source code
 COPY . .
+RUN turbo prune @thenamespace/ens-mcp --docker --root-turbo-json .config/turbo.json
 
-# Build the application
-RUN pnpm run build --filter=./apps/server
-
-# Prune to production deps only for this app
-RUN pnpm --filter=./apps/server deploy --prod /prod
-
-# -----------------------
-# Serve stage
-# -----------------------
-FROM node:22-alpine AS serve
-
+FROM base AS builder
 WORKDIR /app
-ENV NODE_ENV=production
 
-COPY --from=build /prod .
+# Dependencies first: this layer changes only with the pruned manifests and lockfile. No lifecycle
+# scripts: the root `prepare` installs git hooks and patches the dev toolchain, which the build
+# does not use.
+COPY --from=pruner /app/out/json/ ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --ignore-scripts
 
-EXPOSE 3000
+COPY --from=pruner /app/out/full/ ./
+# Not part of any package: the tool configs, turbo.json among them.
+COPY .config/ ./.config/
+RUN turbo --root-turbo-json .config/turbo.json run build --filter=@thenamespace/ens-mcp...
 
-CMD ["node", "dist/cli.mjs", "--http", "--port", "3000"]
+# The package with its production dependencies only.
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm --filter=@thenamespace/ens-mcp deploy --prod --ignore-scripts /prod
+
+FROM ${NODE_IMAGE} AS runner
+ENV NODE_ENV="production" \
+    HOST="0.0.0.0" \
+    PORT="8080"
+WORKDIR /app
+COPY --from=builder --chown=node:node /prod/ ./
+USER node
+EXPOSE 8080
+# The hosted server at ens-mcp.namespace.ninja: its configuration lives here, so Cloud Run sets
+# nothing but PORT. Cloud Run's front end appends the client to X-Forwarded-For (one hop); add one
+# for an external load balancer. Override the command to run the image with other settings.
+CMD ["node", "dist/bin.js", "--http", \
+     "--toolsets", "lookup,lists,register,manage,utils", \
+     "--rpc-url", "https://rpc.namespace.ninja/rpc/1", "--require-rpc", \
+     "--allowed-origins", "*", \
+     "--rate-limit", "60/min", "--proxy-hops", "1"]

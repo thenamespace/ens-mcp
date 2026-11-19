@@ -1,0 +1,66 @@
+{
+  "name": "@thenamespace/ens-mcp",
+  "version": "0.0.0",
+  "description": "MCP server for ENS: look up names, browse names and prepare ENS transactions",
+  "keywords": [
+    "ai",
+    "ens",
+    "ethereum",
+    "ethereum-name-service",
+    "mcp",
+    "model-context-protocol"
+  ],
+  "homepage": "https://github.com/thenamespace/ens-mcp#readme",
+  "bugs": "https://github.com/thenamespace/ens-mcp/issues",
+  "license": "Apache-2.0",
+  "author": "Namespace Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thenamespace/ens-mcp.git",
+    "directory": "packages/ens-mcp"
+  },
+  "bin": {
+    "ens-mcp": "./dist/bin.js"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    "./internal/*": {
+      "workspace-source": "./src/*.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "ens-mcp-dev build",
+    "dev": "ens-mcp-dev build --watch",
+    "lint": "oxlint -c ../../.config/oxlint.config.ts --deny-warnings .",
+    "pack:check": "publint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@ensforge/sdk": "catalog:",
+    "effect": "catalog:",
+    "fflate": "catalog:",
+    "viem": "catalog:"
+  },
+  "devDependencies": {
+    "@ens-mcp/tools": "workspace:*",
+    "@types/node": "catalog:"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "mcpName": "io.github.thenamespace/ens-mcp"
+}

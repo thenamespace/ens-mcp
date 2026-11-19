@@ -1,3 +1,35 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "tests/*"
+  - "tools/*"
+
+catalog:
+  "@arethetypeswrong/cli": "0.18.5"
+  "@changesets/cli": "3.0.3"
+  "@commitlint/cli": "21.2.4"
+  "@commitlint/config-conventional": "21.2.4"
+  "@effect/platform-node": "4.1.4"
+  "@effect/tsgo": "0.70.0"
+  "@effect/vitest": "4.1.4"
+  "@ensforge/sdk": "1.0.1"
+  "@types/node": "26.6.6"
+  effect: "4.1.4"
+  fflate: "0.8.3"
+  klarity: "0.3.0"
+  lefthook: "2.2.2"
+  oxfmt: "0.78.0"
+  oxlint: "1.93.0"
+  oxlint-tsgolint: "7.0.2007"
+  publint: "0.3.25"
+  turbo: "2.11.11"
+  typescript: "7.0.2"
+  viem: "2.57.20"
+  vitest: "5.1.0"
+
+allowBuilds:
+  lefthook: true
+
+minimumReleaseAgeExclude:
+  - "@ensforge/contracts@1.0.1"
+  - "@ensforge/sdk@1.0.1"

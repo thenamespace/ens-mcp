@@ -1,0 +1,4 @@
+{
+  "extends": "klarity/tsconfig/base",
+  "files": []
+}

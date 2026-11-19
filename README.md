@@ -1,18 +1,56 @@
 # ENS MCP Server
 
 [![Install in Cursor](https://img.shields.io/badge/Install_in-Cursor-000000?style=flat-square&logoColor=white)](https://cursor.com/en/install-mcp?name=ens&config=eyJuYW1lIjoiZW5zIiwidHlwZSI6Imh0dHAiLCJ1cmwiOiJodHRwczovL2Vucy1tY3AubmFtZXNwYWNlLm5pbmphL21jcCJ9)
-[![Install in VS Code](https://img.shields.io/badge/Install_in-VS_Code-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=ens-mcp&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fens-mcp.namespace.ninja%2Fmcp%22%7D)
-[![npm version](https://badge.fury.io/js/ens-mcp.svg)](https://www.npmjs.com/package/ens-mcp)
+[![Install in VS Code](https://img.shields.io/badge/Install_in-VS_Code-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=ens&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fens-mcp.namespace.ninja%2Fmcp%22%7D)
+[![npm version](https://img.shields.io/npm/v/@thenamespace/ens-mcp?style=flat-square)](https://www.npmjs.com/package/@thenamespace/ens-mcp)
 
-Give your AI assistant native access to the ENS (Ethereum Name Service). Look up ENS names, profile information, check name availability, get pricing, explore subnames, and query onchain records — all through natural language.
+Give your AI assistant native access to ENS, the Ethereum Name Service. Resolve names, read
+profiles and records, see who controls a name, browse the names an address holds, check prices,
+and prepare registrations and changes for your own wallet, all through natural language.
+
+The server never signs or sends transactions: it prepares and simulates them, and you sign.
 
 ## Installation
 
-Connect to ENS MCP Server:
+Connect to the hosted ENS MCP server:
 
 ```
 https://ens-mcp.namespace.ninja/mcp
 ```
+
+<details>
+<summary><b>Claude Code</b></summary>
+
+```bash
+claude mcp add --transport http ens https://ens-mcp.namespace.ninja/mcp
+```
+
+</details>
+
+<details>
+<summary><b>Claude Desktop and claude.ai</b></summary>
+
+Open **Settings** > **Connectors** > **Add custom connector** and enter:
+
+```
+https://ens-mcp.namespace.ninja/mcp
+```
+
+Or run the server locally: add to `claude_desktop_config.json` (macOS:
+`~/Library/Application Support/Claude/`, Windows: `%APPDATA%\Claude\`):
+
+```json
+{
+  "mcpServers": {
+    "ens": {
+      "command": "npx",
+      "args": ["-y", "@thenamespace/ens-mcp"]
+    }
+  }
+}
+```
+
+</details>
 
 <details>
 <summary><b>Cursor</b></summary>
@@ -28,6 +66,7 @@ Add to `~/.cursor/mcp.json`:
   }
 }
 ```
+
 </details>
 
 <details>
@@ -45,33 +84,7 @@ Add to `.vscode/mcp.json`:
   }
 }
 ```
-</details>
 
-<details>
-<summary><b>Claude Code</b></summary>
-
-```bash
-claude mcp add --transport http ens https://ens-mcp.namespace.ninja/mcp
-```
-</details>
-
-<details>
-<summary><b>Claude Desktop</b></summary>
-
-Add to your config file:
-- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "ens": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://ens-mcp.namespace.ninja/mcp"]
-    }
-  }
-}
-```
 </details>
 
 <details>
@@ -80,6 +93,24 @@ Add to your config file:
 ```bash
 codex mcp add ens --url https://ens-mcp.namespace.ninja/mcp
 ```
+
+</details>
+
+<details>
+<summary><b>Gemini CLI</b></summary>
+
+Add to `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "ens": {
+      "httpUrl": "https://ens-mcp.namespace.ninja/mcp"
+    }
+  }
+}
+```
+
 </details>
 
 <details>
@@ -98,16 +129,7 @@ Add to your `opencode.json`:
   }
 }
 ```
-</details>
 
-<details>
-<summary><b>Antigravity</b></summary>
-
-Open the MCP Store panel (from the "..." dropdown in the side panel), then add a custom server with:
-
-```
-https://ens-mcp.namespace.ninja/mcp
-```
 </details>
 
 <details>
@@ -124,6 +146,7 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
   }
 }
 ```
+
 </details>
 
 <details>
@@ -140,22 +163,7 @@ Add to your Zed settings:
   }
 }
 ```
-</details>
 
-<details>
-<summary><b>Gemini CLI</b></summary>
-
-Add to `~/.gemini/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "ens": {
-      "httpUrl": "https://ens-mcp.namespace.ninja/mcp"
-    }
-  }
-}
-```
 </details>
 
 <details>
@@ -170,6 +178,7 @@ Go to **Settings** > **MCP Servers** > **Add MCP Server** and add:
   }
 }
 ```
+
 </details>
 
 <details>
@@ -186,6 +195,7 @@ Add to `~/.kiro/settings/mcp.json`:
   }
 }
 ```
+
 </details>
 
 <details>
@@ -203,12 +213,24 @@ Add to your Roo Code MCP config:
   }
 }
 ```
+
 </details>
 
 <details>
-<summary><b>Other Clients</b></summary>
+<summary><b>Antigravity</b></summary>
 
-For clients that support remote MCP:
+Open the MCP Store panel (from the "..." menu in the side panel), then add a custom server with:
+
+```
+https://ens-mcp.namespace.ninja/mcp
+```
+
+</details>
+
+<details>
+<summary><b>Other clients</b></summary>
+
+For clients that support remote MCP servers:
 
 ```json
 {
@@ -220,114 +242,117 @@ For clients that support remote MCP:
 }
 ```
 
-For clients that need mcp-remote:
+For clients that only launch local servers:
 
 ```json
 {
   "mcpServers": {
     "ens": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://ens-mcp.namespace.ninja/mcp"]
+      "args": ["-y", "@thenamespace/ens-mcp"]
     }
   }
 }
 ```
+
 </details>
 
 <details>
-<summary><b>Self-Hosting</b></summary>
+<summary><b>Self-hosting</b></summary>
 
-You can also self-host the ENS MCP Server using the npm package.
-
-**Stdio Transport:**
+Run the server yourself to pick the chain, your RPC and the toolsets. It needs Node.js 26 or later.
 
 ```bash
-npx -y ens-mcp
+npx -y @thenamespace/ens-mcp                         # stdio
+npx -y @thenamespace/ens-mcp --http --port 8080      # http://127.0.0.1:8080/mcp
 ```
 
-**HTTP Transport:**
+| Variable           | Description                                   | Default                       |
+| ------------------ | --------------------------------------------- | ----------------------------- |
+| `ENS_MCP_RPC_URL`  | RPC URL for the chain                         | a public RPC                  |
+| `ENS_MCP_CHAIN`    | `mainnet` or `sepolia`                        | `mainnet`                     |
+| `ENS_MCP_TOOLSETS` | Toolsets to enable, comma-separated, or `all` | `lookup,lists,register,utils` |
 
-```bash
-npx -y ens-mcp --http --port 8080
-```
+Every option, HTTP, Docker and rate limits: [docs/self-hosting.md](docs/self-hosting.md).
 
-The server will be available at `http://localhost:8080/mcp`.
-
-**Environment Variables:**
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `RPC_URL` | Ethereum mainnet RPC URL | Viem Provided Public RPC |
-| `SUBGRAPH_URL` | ENS subgraph URL | ENSNode Public Subgraph |
-
-Example with custom RPC and Subgraph:
-
-```bash
-RPC_URL=https://your-rpc-provider.com SUBGRAPH_URL=https://your-subgraph-provider.com npx -y ens-mcp
-```
 </details>
 
-## 💬 Example Natural Language Queries
+The hosted server reads Ethereum mainnet and allows 60 requests per minute per IP. To keep your
+lookups to yourself, or to use Sepolia or the `advanced` tools, run it locally.
+
+## 💬 Example questions
 
 Once ENS MCP is installed, you can ask things like:
 
 ```markdown
-1️⃣ Basic Lookup
+1️⃣ Basic lookup
 
-> Who owns vitalik.eth?
+> Who owns vitalik.eth, and when does it expire?
 
-2️⃣ Resolver & Expiry
+2️⃣ Records and addresses
 
-> What is the resolver and expiry date of vitalik.eth?
+> Give me the ETH and Solana addresses and the Twitter handle for nick.eth.
 
-3️⃣ Records & Addresses
+3️⃣ Reverse lookup
 
-> Give me the ETH address and Twitter handle for vitalik.eth.
+> What is the primary name of 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?
 
-4️⃣ Reverse Lookup
+4️⃣ Portfolio
 
-> What ENS names are owned by 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?
+> Which ENS names does vitalik.eth hold, and which expire in the next 90 days?
 
 5️⃣ Subnames
 
-> List all subdomains under base.eth.
+> List the subnames of base.eth.
 
-6️⃣ Portfolio Analysis
+6️⃣ History
 
-> Show me all ENS names owned by this address and tell me which ones are expiring soon.
+> When did vitalik.eth last change its content hash?
 
-7️⃣ Conditional Acquisition Strategy
+7️⃣ Availability and price
 
-> I want to get example.eth. How much does it cost for 2 years? And if it’s not available, give me the owner details and socials so I can contact them.
+> Is coolname.eth available? How much is it for 2 years, and if it's taken, who owns it?
 
-8️⃣ Names for Address
+8️⃣ Registration
 
-> What are the names owned by 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045?
+> Register coolname.eth for 1 year for my wallet 0x… and set it as my primary name.
 
-9️⃣ Subnames for Name
+9️⃣ Profile changes
 
-> What are the subnames under vitalik.eth?
+> Set my avatar and Twitter handle on alice.eth. I'm signing with alice.eth.
 
-1️⃣0️⃣ Name History
+🔟 Follow-up
 
-> when was the last time vitalik.eth changed its content hash?
+> I sent the commit transaction, here's the hash. What now?
 ```
 
-## Available Tools
+## Available tools
 
-| Tool | Description |
-| ---- | ----------- |
-| `is_name_available` | Check whether an ENS name is currently available for registration |
-| `get_name_price` | Get the registration price for a name at a given duration (in seconds) |
-| `get_profile_details` | Fetch full ENS profile: owner, resolver, expiry, text records, address records, and contenthash |
-| `get_names_for_address` | List all ENS names held by a given address |
-| `get_subnames_for_name` | Retrieve all subdomains registered under a parent ENS name |
-| `get_name_history` | Retrieve the event history of any ENS name |
-| `get_subgraph_records` | Query all record keys associated with a name |
+Tools come in toolsets. The hosted server has every toolset but `advanced`; locally, choose with
+`ENS_MCP_TOOLSETS`.
+
+| Toolset    | Tools                                                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `lookup`   | `resolve_name`, `get_primary_name`, `get_profile`, `get_records`, `get_name_details`, `get_permissions`                                   |
+| `lists`    | `search_names`, `list_names_for_address`, `list_subnames`, `get_name_history`, `list_expiring_names`, `get_indexer_status`                |
+| `register` | `check_availability`, `get_price`, `register_name`, `renew_names`                                                                         |
+| `manage`   | `set_records`, `set_primary_name`, `create_subname`, `update_subname`, `remove_subname`, `transfer_name`, `set_resolver`                  |
+| `advanced` | `wrap_name`, `unwrap_name`, `set_fuses`, `grant_roles`, `revoke_roles`, `set_record_access`, `set_approval`, `migrate_name`, DNS names, … |
+| `utils`    | `normalize_name`, `convert_coin_type`, `convert_content_hash`                                                                             |
+
+The toolsets that prepare transactions also bring `get_plan` and `get_plan_status`. The server
+offers resources (`ens://name/{name}` and more), workflow prompts and an `ens` agent skill too.
+
+## Documentation
+
+- [Tools](docs/tools.md): every tool, resource, prompt and the skill
+- [Transactions](docs/transactions.md): how changes are prepared, signed and followed
+- [Self-hosting](docs/self-hosting.md): configuration, HTTP, Docker, the hosted server
 
 ## Contributing
 
-Contributions are welcome. Feel free to open a PR.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) to set up the repository, and
+[SECURITY.md](SECURITY.md) to report a vulnerability.
 
 ---
 

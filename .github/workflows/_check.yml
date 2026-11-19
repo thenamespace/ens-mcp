@@ -1,0 +1,60 @@
+# The fast lane, shared by CI: formatting, lint, types, builds, the unit tests, package metadata,
+# a build of the server image, and a security audit of the workflows. Network-free.
+name: Check
+
+on:
+  workflow_call:
+    inputs:
+      timeout-minutes:
+        description: Timeout of the check job
+        type: number
+        default: 20
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          cache: pnpm
+      - run: pnpm check
+      - run: pnpm pack:check
+
+  # The image deploy.yml ships, built but not pushed, so a broken Dockerfile fails the PR.
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build the server image
+        run: docker build --tag ens-mcp:ci .
+      - name: Check the server starts
+        run: |
+          docker run --detach --name ens-mcp --publish 8080:8080 ens-mcp:ci
+          curl --silent --show-error --fail --retry 10 --retry-delay 1 --retry-all-errors \
+            http://localhost:8080/healthz
+          docker rm --force ens-mcp
+
+  zizmor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      # Annotations instead of code scanning: SARIF uploads would need `security-events: write`.
+      - uses: zizmorcore/zizmor-action@v0.8.1
+        with:
+          version: 1.32.0
+          config: .github/zizmor.yml
+          advanced-security: false
+          annotations: true

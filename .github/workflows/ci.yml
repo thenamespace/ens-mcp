@@ -1,0 +1,27 @@
+# Pull requests, pushes to main, the merge queue and manual runs.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    # The version PR only changes versions and changelogs, and GitHub does not run workflows on
+    # PRs the workflow token opens; dispatch CI on its branch to check it.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.user.login != 'github-actions[bot]' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      github.head_ref != 'changeset-release/main'
+    uses: ./.github/workflows/_check.yml

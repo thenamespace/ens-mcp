@@ -1,0 +1,45 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.thenamespace/ens-mcp",
+  "title": "ENS",
+  "description": "ENS names: resolve, read profiles and ownership, list names, prepare registrations and changes",
+  "websiteUrl": "https://github.com/thenamespace/ens-mcp",
+  "repository": {
+    "url": "https://github.com/thenamespace/ens-mcp",
+    "source": "github",
+    "subfolder": "packages/ens-mcp"
+  },
+  "version": "0.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@thenamespace/ens-mcp",
+      "version": "0.0.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "ENS_MCP_RPC_URL",
+          "description": "RPC URL for the chain; a rate-limited public RPC when unset",
+          "isSecret": true
+        },
+        {
+          "name": "ENS_MCP_CHAIN",
+          "description": "Chain to read ENS from",
+          "choices": ["mainnet", "sepolia"],
+          "default": "mainnet"
+        },
+        {
+          "name": "ENS_MCP_TOOLSETS",
+          "description": "Comma-separated toolsets: lookup, lists, register, manage, advanced, utils, or all",
+          "default": "lookup,lists,register,utils"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://ens-mcp.namespace.ninja/mcp"
+    }
+  ]
+}

@@ -1,43 +1,47 @@
 {
-  "author": "Vedant Chainani <vedant@envoy1084.xyz>",
-  "bugs": {
-    "url": "https://github.com/thenamespace/ens-mcp/issues"
+  "name": "ens-mcp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "turbo --root-turbo-json .config/turbo.json run build",
+    "changeset": "changeset",
+    "check": "pnpm format:check && pnpm skills:check && pnpm lint && turbo --root-turbo-json .config/turbo.json run typecheck build && pnpm test",
+    "dev": "turbo --root-turbo-json .config/turbo.json run dev",
+    "format": "oxfmt -c .config/oxfmt.config.ts --ignore-path .gitignore --ignore-path .config/oxfmtignore --write . && ens-mcp-dev skills",
+    "format:check": "oxfmt -c .config/oxfmt.config.ts --ignore-path .gitignore --ignore-path .config/oxfmtignore --check .",
+    "lint": "turbo --root-turbo-json .config/turbo.json run lint",
+    "lint:fix": "turbo --root-turbo-json .config/turbo.json run lint -- --fix",
+    "pack:check": "turbo --root-turbo-json .config/turbo.json run pack:check",
+    "prepare": "lefthook install && effect-tsgo patch --typescript --oxlint",
+    "skills": "ens-mcp-dev skills",
+    "skills:check": "ens-mcp-dev skills --check",
+    "release:version": "changeset version && pnpm install --lockfile-only && pnpm format",
+    "test": "vitest run -c .config/vitest.config.ts",
+    "typecheck": "turbo --root-turbo-json .config/turbo.json run typecheck"
   },
-  "description": "",
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
-    "@changesets/cli": "^2.29.8",
-    "@commitlint/cli": "^20.4.2",
-    "@commitlint/config-conventional": "^20.4.2",
-    "@repo/config": "workspace:*",
-    "lefthook": "^2.1.1",
-    "turbo": "^2.8.10",
-    "typescript": "^5.9.3"
+    "@arethetypeswrong/cli": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@effect/tsgo": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@ens-mcp/tools": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:",
+    "klarity": "catalog:",
+    "lefthook": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "publint": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=26"
   },
-  "homepage": "https://github.com/thenamespace/ens-mcp#readme",
-  "keywords": [],
-  "license": "MIT",
-  "name": "ens-mpc-server",
-  "packageManager": "pnpm@10.15.0",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thenamespace/ens-mcp.git"
-  },
-  "scripts": {
-    "build": "turbo build",
-    "commitlint": "commitlint --edit",
-    "dev": "turbo dev",
-    "format": "pnpm exec biome format --write",
-    "format:check": "pnpm exec biome format",
-    "lint": "pnpm exec biome check --write",
-    "lint:check": "pnpm exec biome check",
-    "lint:write": "turbo lint:write",
-    "prepare": "if [ \"$SKIP_LEFTHOOK\" = \"true\" ] || [ \"$CI\" = \"true\" ]; then echo 'Skipping lefthook'; else lefthook install; fi",
-    "release": "pnpm build && changeset publish"
-  },
-  "version": "1.0.0"
+  "packageManager": "pnpm@12.21.0"
 }

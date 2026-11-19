@@ -1,15 +1,14 @@
 {
-  "[css,graphql,javascript,json,jsonc,typescript,typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "editor.codeActionsOnSave": {
-    "source.action.useSortedAttributes.biome": "explicit",
-    "source.action.useSortedKeys.biome": "explicit",
-    "source.action.useSortedProperties.biome": "explicit",
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  },
-  "editor.defaultFormatter": "biomejs.biome",
+  "oxc.configPath": ".config/oxlint.config.ts",
+  "oxc.fmt.configPath": ".config/oxfmt.config.ts",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "vitest.rootConfig": ".config/vitest.config.ts",
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/typescript/bin",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.tsdk.additionalLocations": ["./node_modules/typescript/bin"],
+  "json.schemas": [
+    { "fileMatch": [".config/turbo.json"], "url": "https://turborepo.com/schema.json" }
+  ]
 }

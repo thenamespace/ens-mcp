@@ -1,0 +1,27 @@
+{
+  "name": "@ens-mcp/tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repository tooling for ens-mcp: package builds and checks",
+  "bin": {
+    "ens-mcp-dev": "./src/bin.ts"
+  },
+  "type": "module",
+  "exports": {
+    "./internal/*": {
+      "workspace-source": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint -c ../../.config/oxlint.config.ts --deny-warnings .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:",
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}
