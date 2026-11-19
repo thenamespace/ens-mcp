@@ -3,6 +3,9 @@ import { Array as Arr, Layer } from "effect";
 import { AddressResources } from "../resources/address.js";
 import { NameResources } from "../resources/name.js";
 import { NameActivityResources } from "../resources/nameActivity.js";
+import { ChainResource } from "../resources/reference/chain.js";
+import { ErrorResources } from "../resources/reference/errors.js";
+import { RecordsResource } from "../resources/reference/records.js";
 import { AdvancedTools } from "../tools/advanced/index.js";
 import { ListsTools } from "../tools/lists/index.js";
 import { LookupTools } from "../tools/lookup/index.js";
@@ -33,5 +36,8 @@ export const registrations = (enabled: ReadonlyArray<Toolset>) => {
     ...(Arr.some(enabled, (toolset) => Arr.contains(writeToolsets, toolset)) ? [PlansTools] : []),
     ...(has("lookup") ? [NameResources, AddressResources({ names: has("lists") })] : []),
     ...(has("lists") ? [NameActivityResources] : []),
+    ChainResource,
+    ErrorResources,
+    RecordsResource,
   );
 };

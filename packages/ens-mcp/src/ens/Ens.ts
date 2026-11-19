@@ -24,6 +24,8 @@ export class Ens extends Context.Service<
     readonly chain: Chain;
     readonly client: Ensforge.Client;
     readonly hasIndexer: boolean;
+    /** Whether reads go through a configured RPC rather than a public one. */
+    readonly customRpc: boolean;
   }
 >()("@thenamespace/ens-mcp/Ens") {
   static readonly layer = (options: EnsOptions) =>
@@ -35,7 +37,12 @@ export class Ens extends Context.Service<
           ...(options.indexer === "none" ? {} : { indexer: indexer(options.chain) }),
         });
 
-        return Ens.of({ chain: options.chain, client, hasIndexer: options.indexer !== "none" });
+        return Ens.of({
+          chain: options.chain,
+          client,
+          hasIndexer: options.indexer !== "none",
+          customRpc: Option.isSome(options.rpcUrl),
+        });
       }),
     );
 }

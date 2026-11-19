@@ -24,6 +24,7 @@ export const offlineEns = (options: { readonly indexer?: Indexer } = {}) =>
         ...(options.indexer === undefined ? {} : { indexer: options.indexer }),
       }),
       hasIndexer: options.indexer !== undefined,
+      customRpc: true,
     }),
   );
 
