@@ -65,6 +65,18 @@ export const planCalls = (plan: Plan) =>
     })),
   );
 
+/** Why each failed step of a simulation of `plan` fails, with its step number and next step. */
+export const simulationIssues = (plan: Plan, steps: Plan.Simulation["steps"]) =>
+  Arr.flatMap(steps, (step) => {
+    if (step.ok || step.error === undefined) return [];
+    const { code, message, hint } = toToolError(step.error);
+    const number = Arr.findFirstIndex(plan.steps, ({ id }) => id === step.id).pipe(
+      Option.map((index) => index + 1),
+      Option.getOrElse(() => 0),
+    );
+    return [{ step: number, code, message, ...(hint === undefined ? {} : { hint }) }];
+  });
+
 /** How to sign `plan` from `account` on `chain`, in plain words. */
 export const planSigning = (
   plan: Plan,
@@ -118,11 +130,6 @@ export const prepareWrite = Effect.fn("prepareWrite")(function* <Options>(
   });
 
   const checked = new Set(Arr.map(simulation.steps, (step) => step.id));
-  const stepNumber = (id: string) =>
-    Arr.findFirstIndex(plan.steps, (step) => step.id === id).pipe(
-      Option.map((index) => index + 1),
-      Option.getOrElse(() => 0),
-    );
   const steps = Arr.map(planSteps(plan), (step, index) => ({
     ...step,
     checked: Option.match(Arr.get(plan.steps, index), {
@@ -136,13 +143,7 @@ export const prepareWrite = Effect.fn("prepareWrite")(function* <Options>(
     account: options.account,
     chain: ens.chain,
     willSucceed: simulation.ok,
-    issues: Arr.flatMap(simulation.steps, (step) => {
-      if (step.ok || step.error === undefined) return [];
-      const { code, message, hint } = toToolError(step.error);
-      return [
-        { step: stepNumber(step.id), code, message, ...(hint === undefined ? {} : { hint }) },
-      ];
-    }),
+    issues: simulationIssues(plan, simulation.steps),
     requirements: Arr.map(plan.requirements, (requirement) =>
       describeRequirement(requirement, tokens),
     ),

@@ -4,6 +4,7 @@ import { Base64Url } from "effect/encoding";
 import { Errors, Plan } from "@ensforge/sdk/effect";
 import { deflateSync, inflateSync, strFromU8, strToU8 } from "fflate";
 
+import { viemChains, type Chain } from "./Chain.js";
 import { toToolError, type EnsToolError } from "./errors.js";
 
 const prefix = "ensplan1.";
@@ -34,3 +35,16 @@ export const decodePlan = (handle: string): Effect.Effect<Plan, EnsToolError> =>
     catch: () => undefined,
   }).pipe(Effect.catch(() => invalid));
 };
+
+/** Fails with `PLAN_CHAIN_MISMATCH` unless `plan` is for `chain`, the chain the server reads. */
+export const requirePlanChain = (plan: Plan, chain: Chain): Effect.Effect<void, EnsToolError> =>
+  plan.chainId === viemChains[chain].id
+    ? Effect.void
+    : Effect.fail(
+        toToolError(
+          new Errors.PlanError({
+            code: "PLAN_CHAIN_MISMATCH",
+            shortMessage: `This plan is for chain ${plan.chainId}, but this server reads ${chain}.`,
+          }),
+        ),
+      );

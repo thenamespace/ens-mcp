@@ -16,6 +16,8 @@
         },
         "keyPatterns": [{ "target": "service", "pattern": "package-identifier" }],
         "allowedUnstableApis": [
+          "@ensforge/sdk/internal/rpc",
+          "@ensforge/sdk/internal/write/simulate",
           "@effect/platform-node",
           "effect/FileSystem",
           "effect/Path",

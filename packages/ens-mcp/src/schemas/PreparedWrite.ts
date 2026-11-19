@@ -22,6 +22,14 @@ export const PlanCall = Schema.Struct({
   value: Schema.String.annotate({ description: "Wei sent with the call" }),
 });
 
+/** Why a step of a plan would fail, or failed, with the next step. */
+export const PlanIssue = Schema.Struct({
+  step: Schema.Int,
+  code: Schema.String,
+  message: Schema.String,
+  hint: Schema.optionalKey(Schema.String),
+});
+
 /** A write the server prepared for the user's wallet: what it does, whether it would work, and the calls to sign. */
 export const PreparedWrite = Schema.Struct({
   summary: Schema.String,
@@ -30,14 +38,7 @@ export const PreparedWrite = Schema.Struct({
   willSucceed: Schema.Boolean.annotate({
     description: "Whether the steps that can be checked now would succeed if signed now",
   }),
-  issues: Schema.Array(
-    Schema.Struct({
-      step: Schema.Int,
-      code: Schema.String,
-      message: Schema.String,
-      hint: Schema.optionalKey(Schema.String),
-    }),
-  ).annotate({ description: "Why a checked step would fail" }),
+  issues: Schema.Array(PlanIssue).annotate({ description: "Why a checked step would fail" }),
   requirements: Schema.Array(Schema.String).annotate({
     description: "What the account needs before signing, e.g. a token balance",
   }),
