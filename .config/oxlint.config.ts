@@ -17,6 +17,9 @@ export default defineConfig({
   rules: {
     // `_tag` is Effect's discriminant for tagged errors and services.
     "no-underscore-dangle": ["error", { allow: ["_tag"] }],
+    // Helpers take their subject first, like ensforge's actions; data-last overloads would add
+    // signatures no caller pipes through.
+    "effecttsgo/missing-pipeable-signature": "off",
   },
   overrides: [
     {
