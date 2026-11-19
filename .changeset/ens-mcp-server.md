@@ -9,5 +9,7 @@ tools are offered: `lookup` resolves names, primary names, profiles, records, na
 permissions; `lists` searches names, lists them by address, parent and expiry, and reads
 name history from an indexer (with Basenames on mainnet); `register` and `manage` prepare
 registrations, renewals, record, primary name, subname, transfer and resolver changes for the
-user's own wallet, with simulation, cost and unsigned calls; `utils` normalises names and
+user's own wallet, with simulation, cost and unsigned calls, and follow a plan from its
+transaction hashes as the user signs it; `advanced` covers wrapping, fuses, ENSv2 roles, record
+access, approvals, migration to ENSv2 and DNS names; `utils` normalises names and
 converts coin types and content hashes. The server never signs or sends transactions.

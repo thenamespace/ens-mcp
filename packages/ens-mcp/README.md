@@ -70,7 +70,9 @@ These read from the indexer, which can lag the chain by a few blocks. Results co
 Write tools prepare transactions for the user's own wallet; the server never signs or sends
 anything. Each returns a summary, whether the checked steps would succeed (and why not), what the
 account needs (such as a USDC balance), the cost, plain signing instructions, the unsigned calls and
-a plan handle for `get_plan`. Registrations and renewals are paid in USDC by default, or DAI;
+a plan handle. After the user signs, `get_plan_status` follows the plan from the transaction hashes:
+each step's state, the registration commitment's window, whether the next step would succeed now,
+and what to do next. Registrations and renewals are paid in USDC by default, or DAI;
 registering takes two signatures at least a minute apart.
 
 | Tool                 | Answers or prepares                                                  |
@@ -86,9 +88,29 @@ registering takes two signatures at least a minute apart.
 | `remove_subname`     | Removing a subname                                                   |
 | `transfer_name`      | Transferring a name                                                  |
 | `set_resolver`       | Changing a name's resolver                                           |
-| `get_plan`           | Reading a prepared plan back from its handle                         |
+| `get_plan`           | Reading a prepared plan back from its handle, optionally re-checked  |
+| `get_plan_status`    | Following a plan the user is signing, from its transaction hashes    |
 
-`register` is on by default; `manage` is enabled with `--toolsets`.
+`register` is on by default; `manage` is enabled with `--toolsets`. The plan tools come with any
+toolset that prepares writes.
+
+### `advanced`
+
+Enabled with `--toolsets`. Also prepare-only.
+
+| Tool                   | Answers or prepares                                                   |
+| ---------------------- | --------------------------------------------------------------------- |
+| `wrap_name`            | Wrapping an ENSv1 name in the NameWrapper, optionally burning fuses   |
+| `unwrap_name`          | Unwrapping a wrapped name                                             |
+| `set_fuses`            | Burning NameWrapper fuses, on a name or as the parent on a subname    |
+| `grant_roles`          | Granting ENSv2 roles on a name or its resolver                        |
+| `revoke_roles`         | Revoking ENSv2 roles                                                  |
+| `set_record_access`    | Letting an account edit some or all of an ENSv2 name's records        |
+| `set_approval`         | Approving or revoking an operator, a name's delegate or a token       |
+| `get_migration_status` | Whether an ENSv1 name can move to ENSv2, what blocks it, what carries |
+| `migrate_name`         | Moving ENSv1 names to ENSv2, with their records and subnames          |
+| `get_dns_status`       | Whether a DNS name is in ENS, and the TXT record to add               |
+| `claim_dns_name`       | Claiming a DNS name into ENS with its DNSSEC proof                    |
 
 ### `utils`
 
