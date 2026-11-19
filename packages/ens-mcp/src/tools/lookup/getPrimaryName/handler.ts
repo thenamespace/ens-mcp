@@ -4,7 +4,7 @@ import { Actions } from "@ensforge/sdk/effect";
 
 import { toCoinType } from "../../../ens/coinType.js";
 import type { Ens } from "../../../ens/Ens.js";
-import { runEns, type EnsToolError } from "../../../ens/errors.js";
+import { runEns, toItemError, type EnsToolError } from "../../../ens/errors.js";
 import type { GetPrimaryName } from "./tool.js";
 
 /** Handles `get_primary_name`. */
@@ -23,7 +23,7 @@ export const getPrimaryName = (ens: Ens["Service"]) =>
           Effect.map((result) =>
             Result.isSuccess(result)
               ? { address, name: result.success }
-              : { address, error: result.failure },
+              : { address, error: toItemError(result.failure) },
           ),
         ),
       { concurrency: "unbounded" },

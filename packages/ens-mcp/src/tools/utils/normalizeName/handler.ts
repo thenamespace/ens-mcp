@@ -2,7 +2,7 @@ import { Effect, Result } from "effect";
 
 import { Name } from "@ensforge/sdk/effect";
 
-import { tryEns, type EnsToolError } from "../../../ens/errors.js";
+import { toItemError, tryEns, type EnsToolError } from "../../../ens/errors.js";
 import type { NormalizeName } from "./tool.js";
 
 /** Handles `normalize_name`. */
@@ -26,7 +26,7 @@ export const normalizeName = Effect.fn("normalize_name")(function* (
       }).pipe(
         Effect.result,
         Effect.map((result) =>
-          Result.isSuccess(result) ? result.success : { input, error: result.failure },
+          Result.isSuccess(result) ? result.success : { input, error: toItemError(result.failure) },
         ),
       ),
     { concurrency: "unbounded" },

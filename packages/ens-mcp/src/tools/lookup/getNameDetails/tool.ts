@@ -30,11 +30,6 @@ export const GetNameDetails = Tool.make("get_name_details", {
     summary: Schema.String,
     status: Schema.Literals(["available", "registered", "grace", "expired", "reserved"]),
     ensVersion: Schema.Literals(["v1", "v2"]),
-    kind: Schema.String.annotate({
-      description:
-        "available, v1-unwrapped, v1-wrapped, v2-native, v2-migrated (moved from ENSv1) or " +
-        "v2-reserved",
-    }),
     owner: Schema.NullOr(Address).annotate({ description: "Who ultimately controls the name" }),
     manager: Schema.optionalKey(Address).annotate({
       description: "ENSv1 registry owner (the ENS app's manager), when the name has one",
@@ -57,7 +52,8 @@ export const GetNameDetails = Tool.make("get_name_details", {
       }),
     ),
     gracePeriodEnd: Schema.optionalKey(Timestamp),
-    wrapped: Schema.Boolean,
+    wrapped: Schema.Boolean.annotate({ description: "Wrapped in the ENSv1 NameWrapper" }),
+    migrated: Schema.Boolean.annotate({ description: "Moved from ENSv1 to ENSv2" }),
     available: Schema.Boolean.annotate({ description: "Can be registered now" }),
     renewable: Schema.Boolean.annotate({ description: "Can be renewed now" }),
     reachable: Schema.Boolean.annotate({

@@ -55,5 +55,7 @@ export const ListedName = Schema.Struct({
   }),
   expiresAt: Schema.optionalKey(Timestamp),
   daysLeft: Schema.optionalKey(Schema.Int),
-  graceEndsAt: Schema.optionalKey(Timestamp),
+  graceEndsAt: Schema.optionalKey(Timestamp).annotate({
+    description: "End of the grace period, while the name is in it",
+  }),
 });

@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { Tool } from "effect/ai";
 
-import { EnsToolError } from "../../../ens/errors.js";
+import { EnsToolError, ItemError } from "../../../ens/errors.js";
 import { Address, Addresses } from "../../../schemas/Address.js";
 import { Coin } from "../../../schemas/Coin.js";
 import { Name } from "../../../schemas/Name.js";
@@ -12,7 +12,7 @@ const Found = Schema.Struct({
   name: Schema.NullOr(Name).annotate({ description: "The primary name; null when it has none" }),
 });
 
-const Failed = Schema.Struct({ address: Address, error: EnsToolError });
+const Failed = Schema.Struct({ address: Address, error: ItemError });
 
 /** Finds the ENS names addresses use as their primary name. */
 export const GetPrimaryName = Tool.make("get_primary_name", {

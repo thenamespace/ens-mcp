@@ -2,6 +2,8 @@ import { Cause, Effect, Schedule, Schema } from "effect";
 
 import { Errors } from "@ensforge/sdk/effect";
 
+import { hints } from "./hints.js";
+
 /**
  * Why an ENS operation failed, written for the model: ensforge's stable `code`, what went wrong,
  * and what to do next.
@@ -17,9 +19,25 @@ export class EnsToolError extends Schema.TaggedError<
   docsUrl: Schema.String,
 }) {}
 
+/**
+ * Why one item of a batch failed: the error without the fields that only matter for a whole call.
+ */
+export const ItemError = Schema.Struct({
+  code: Schema.String,
+  message: Schema.String,
+  hint: Schema.optionalKey(Schema.String),
+});
+
+/** The `ItemError` of a failed item. */
+export const toItemError = (error: EnsToolError): typeof ItemError.Type => ({
+  code: error.code,
+  message: error.message,
+  ...(error.hint === undefined ? {} : { hint: error.hint }),
+});
+
 /** Converts an ensforge error, keeping its precise message and its user-facing next step. */
 export const toToolError = (error: Errors.AnyError): EnsToolError => {
-  const { action } = Errors.describe(error);
+  const { action } = Errors.describe(error, { messages: hints });
   return EnsToolError.make({
     code: error.code,
     message: error.shortMessage,

@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { Tool } from "effect/ai";
 
-import { EnsToolError } from "../../../ens/errors.js";
+import { EnsToolError, ItemError } from "../../../ens/errors.js";
 import { Coin } from "../../../schemas/Coin.js";
 import { Name, Names } from "../../../schemas/Name.js";
 import { ReadsEns } from "../../annotations.js";
@@ -13,7 +13,7 @@ const Resolved = Schema.Struct({
   }),
 });
 
-const Failed = Schema.Struct({ name: Name, error: EnsToolError });
+const Failed = Schema.Struct({ name: Name, error: ItemError });
 
 /** Resolves ENS names to addresses. */
 export const ResolveName = Tool.make("resolve_name", {

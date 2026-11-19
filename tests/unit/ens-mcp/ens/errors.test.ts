@@ -3,7 +3,7 @@ import { Effect, Exit, Fiber, Ref } from "effect";
 import { TestClock } from "effect/testing";
 
 import { Errors } from "@ensforge/sdk/effect";
-import { runEns, tryEns } from "@thenamespace/ens-mcp/internal/ens/errors";
+import { runEns, toToolError, tryEns } from "@thenamespace/ens-mcp/internal/ens/errors";
 
 describe("runEns", () => {
   it.effect("retries retryable failures, then reports the tool error", () =>
@@ -40,6 +40,14 @@ describe("runEns", () => {
       expect(error.hint).toBeTypeOf("string");
     }),
   );
+});
+
+describe("toToolError", () => {
+  it("gives next steps that name the server's settings", () => {
+    const error = toToolError(new Errors.NetworkError({ code: "RATE_LIMITED" }));
+
+    expect(error.hint).toContain("ENS_MCP_RPC_URL");
+  });
 });
 
 describe("tryEns", () => {

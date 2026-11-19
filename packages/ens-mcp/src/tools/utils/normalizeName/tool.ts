@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { Tool } from "effect/ai";
 
-import { EnsToolError } from "../../../ens/errors.js";
+import { EnsToolError, ItemError } from "../../../ens/errors.js";
 import { Hex } from "../../../schemas/Hex.js";
 import { Name, Names } from "../../../schemas/Name.js";
 import { Computes } from "../../annotations.js";
@@ -15,7 +15,7 @@ const Valid = Schema.Struct({
   labelhash: Hex.annotate({ description: "Labelhash of the first label" }),
 });
 
-const Invalid = Schema.Struct({ input: Name, error: EnsToolError });
+const Invalid = Schema.Struct({ input: Name, error: ItemError });
 
 /** Normalises ENS names and computes their hashes. */
 export const NormalizeName = Tool.make("normalize_name", {

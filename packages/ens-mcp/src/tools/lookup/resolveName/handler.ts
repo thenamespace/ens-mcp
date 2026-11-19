@@ -4,7 +4,7 @@ import { Actions } from "@ensforge/sdk/effect";
 
 import { toCoinType } from "../../../ens/coinType.js";
 import type { Ens } from "../../../ens/Ens.js";
-import { runEns, type EnsToolError } from "../../../ens/errors.js";
+import { runEns, toItemError, type EnsToolError } from "../../../ens/errors.js";
 import type { ResolveName } from "./tool.js";
 
 /** Handles `resolve_name`. */
@@ -24,7 +24,7 @@ export const resolveName = (ens: Ens["Service"]) =>
           Effect.map((result) =>
             Result.isSuccess(result)
               ? { name, address: result.success }
-              : { name, error: result.failure },
+              : { name, error: toItemError(result.failure) },
           ),
         ),
       { concurrency: "unbounded" },

@@ -31,13 +31,35 @@ describe("resolve_name", () => {
       });
 
       expect(result.isError).toBe(false);
-      expect(result.structuredContent).toMatchObject({
+      expect(result.structuredContent).toEqual({
         coin: "eth",
         results: [
-          { name: "x..eth", error: { code: "INVALID_NAME" } },
-          { name: "bad name.eth", error: { code: "INVALID_NAME" } },
+          {
+            name: "x..eth",
+            error: { code: "INVALID_NAME", message: expect.any(String), hint: expect.any(String) },
+          },
+          {
+            name: "bad name.eth",
+            error: { code: "INVALID_NAME", message: expect.any(String), hint: expect.any(String) },
+          },
         ],
       });
+    }),
+  );
+
+  it.effect("rejects misspelled parameters so the model can correct them", () =>
+    Effect.gen(function* () {
+      const client = yield* mcpClient({ ens: OfflineEns });
+
+      const result = yield* client.callTool({
+        name: "resolve_name",
+        arguments: { names: ["nick.eth"], cion: "btc" },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(result.content).toEqual([
+        { type: "text", text: expect.stringContaining("excess property") },
+      ]);
     }),
   );
 });

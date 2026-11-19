@@ -39,7 +39,8 @@ export const toListedName = (item: IndexedName, now: DateTime.DateTime) => ({
   ...(item.expiresAt === null || item.expiresAt >= never
     ? {}
     : { expiresAt: fromUnixSeconds(item.expiresAt), daysLeft: daysUntil(item.expiresAt, now) }),
-  ...(item.graceEndsAt === null || item.graceEndsAt >= never
+  // The grace period matters only while the name is in it.
+  ...(item.status !== "expired" || item.graceEndsAt === null || item.graceEndsAt >= never
     ? {}
     : { graceEndsAt: fromUnixSeconds(item.graceEndsAt) }),
 });
