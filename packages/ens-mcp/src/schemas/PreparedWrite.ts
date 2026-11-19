@@ -70,3 +70,8 @@ export const PreparedWrite = Schema.Struct({
     description: "Handle of this plan for get_plan; pass it back unchanged",
   }),
 });
+
+/** A plan handle passed back to the plan tools. */
+export const PlanHandle = Schema.String.check(Schema.isMaxLength(100_000)).annotate({
+  description: "The plan handle a prepare tool returned",
+});

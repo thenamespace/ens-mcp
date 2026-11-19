@@ -1,8 +1,10 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, String as Str } from "effect";
+import { Base64Url } from "effect/encoding";
 
 import type { Plan } from "@ensforge/sdk/effect";
 import { decodePlan, encodePlan } from "@thenamespace/ens-mcp/internal/ens/PlanHandle";
+import { deflateSync, strToU8 } from "fflate";
 
 const plan: Plan = {
   id: "plan-1",
@@ -44,6 +46,17 @@ describe("plan handles", () => {
         "PLAN_INVALID",
         "PLAN_INVALID",
       ]);
+    }),
+  );
+
+  it.effect("reject a handle that inflates past any real plan", () =>
+    Effect.gen(function* () {
+      // 50 MB of whitespace deflates to about 50 KB.
+      const bomb = `ensplan1.${Base64Url.encode(deflateSync(strToU8(Str.repeat(50_000_000)(" ")), { level: 9 }))}`;
+
+      const error = yield* Effect.flip(decodePlan(bomb));
+
+      expect(error.code).toBe("PLAN_INVALID");
     }),
   );
 });

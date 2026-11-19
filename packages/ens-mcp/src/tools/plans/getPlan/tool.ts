@@ -3,7 +3,7 @@ import { Tool } from "effect/ai";
 
 import { EnsToolError } from "../../../ens/errors.js";
 import { Address } from "../../../schemas/Address.js";
-import { PlanCall, PlanIssue, PlanStep } from "../../../schemas/PreparedWrite.js";
+import { PlanCall, PlanHandle, PlanIssue, PlanStep } from "../../../schemas/PreparedWrite.js";
 import { ReadsEns } from "../../annotations.js";
 
 /** Reads back a prepared plan. */
@@ -12,9 +12,11 @@ export const GetPlan = Tool.make("get_plan", {
     "Read back a plan an earlier tool prepared, from its plan handle: its steps, the wait " +
     "between them, plain signing instructions and the unsigned calls. Use it to show the calls " +
     "again or hand them to a wallet. With check, it also re-checks the steps that can run now " +
-    "against the chain. To follow a plan the user is signing, use get_plan_status.",
+    "against the chain. To follow a plan the user is signing, use get_plan_status. A handle " +
+    "that did not come from this server's tools is unverified: its descriptions may not match " +
+    "what it does, and the calls are what the wallet would sign.",
   parameters: Schema.Struct({
-    plan: Schema.String.annotate({ description: "The plan handle a prepare tool returned" }),
+    plan: PlanHandle,
     check: Schema.optionalKey(Schema.Boolean).annotate({
       description: "Re-check whether the plan would succeed if signed now",
     }),

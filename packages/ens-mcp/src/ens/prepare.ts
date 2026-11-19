@@ -9,6 +9,7 @@ import type { PreparedWrite } from "../schemas/PreparedWrite.js";
 import type { Ens } from "./Ens.js";
 import { runEns, toToolError, type EnsToolError } from "./errors.js";
 import { encodePlan } from "./PlanHandle.js";
+import { cleanRecordText } from "./recordText.js";
 import { signingGuide } from "./signing.js";
 
 /** The planning methods every ensforge write action carries. */
@@ -46,7 +47,8 @@ const describeRequirement = (requirement: Plan.Requirement, tokens: ReadonlyArra
 export const planSteps = (plan: Plan) =>
   Arr.map(plan.steps, (step, index) => ({
     step: index + 1,
-    description: step.description,
+    // Handles come back from the model, so their text is not trusted.
+    description: cleanRecordText(step.description),
     calls: step.calls.length,
     ...(step.waitFor === undefined
       ? {}

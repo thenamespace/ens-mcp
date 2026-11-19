@@ -4,7 +4,7 @@ import { Tool } from "effect/ai";
 import { EnsToolError } from "../../../ens/errors.js";
 import { Address } from "../../../schemas/Address.js";
 import { Hex } from "../../../schemas/Hex.js";
-import { PlanIssue } from "../../../schemas/PreparedWrite.js";
+import { PlanHandle, PlanIssue } from "../../../schemas/PreparedWrite.js";
 import { Timestamp } from "../../../schemas/Timestamp.js";
 import { ReadsEns } from "../../annotations.js";
 
@@ -21,7 +21,7 @@ export const GetPlanStatus = Tool.make("get_plan_status", {
     "blocked), the registration commitment's window, whether the next step would succeed now " +
     "and what to do next. Once every step is confirmed it names the tool that shows the result.",
   parameters: Schema.Struct({
-    plan: Schema.String.annotate({ description: "The plan handle a prepare tool returned" }),
+    plan: PlanHandle,
     transactions: Schema.optionalKey(
       Schema.Array(
         Schema.Struct({

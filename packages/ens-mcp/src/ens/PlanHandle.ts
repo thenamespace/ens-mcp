@@ -9,6 +9,10 @@ import { toToolError, type EnsToolError } from "./errors.js";
 
 const prefix = "ensplan1.";
 
+// Well above any real plan, and small enough that a handle crafted to inflate without end cannot
+// exhaust memory: decoding stops here and reads the plan as invalid.
+const maxPlanBytes = 1_048_576;
+
 /**
  * A plan as a self-contained string for the model to hand back later: the serialized plan,
  * compressed and base64url-encoded. The server keeps nothing, so any instance can read it.
@@ -31,7 +35,12 @@ export const decodePlan = (handle: string): Effect.Effect<Plan, EnsToolError> =>
   const bytes = Base64Url.decode(Str.slice(prefix.length)(handle));
   if (Result.isFailure(bytes)) return invalid;
   return Effect.try({
-    try: () => Plan.deserialize(strFromU8(inflateSync(bytes.success))),
+    try: () => {
+      // With `out`, fflate stops writing when the buffer is full instead of growing it.
+      const json = inflateSync(bytes.success, { out: new Uint8Array(maxPlanBytes) });
+      if (json.length === maxPlanBytes) throw new Error("Plan too large");
+      return Plan.deserialize(strFromU8(json));
+    },
     catch: () => undefined,
   }).pipe(Effect.catch(() => invalid));
 };

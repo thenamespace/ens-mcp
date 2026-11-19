@@ -6,6 +6,7 @@ import type { Ens } from "../../../ens/Ens.js";
 import type { EnsToolError } from "../../../ens/errors.js";
 import { decodePlan, requirePlanChain } from "../../../ens/PlanHandle.js";
 import { planCalls, planSigning, planSteps, simulationIssues } from "../../../ens/prepare.js";
+import { cleanRecordText } from "../../../ens/recordText.js";
 import type { GetPlan } from "./tool.js";
 
 /** Handles `get_plan`. */
@@ -19,7 +20,7 @@ export const getPlan = (ens: Ens["Service"]) =>
       params.check === true ? yield* simulatePlan(ens.client, plan, plan.account) : undefined;
 
     return {
-      operation: plan.operation,
+      operation: cleanRecordText(plan.operation),
       account: plan.account ?? null,
       chainId: plan.chainId,
       steps: planSteps(plan),

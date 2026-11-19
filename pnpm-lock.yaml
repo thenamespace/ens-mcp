@@ -338,6 +338,9 @@ importers:
       effect:
         specifier: 'catalog:'
         version: 4.1.4
+      fflate:
+        specifier: 'catalog:'
+        version: 0.8.3
       viem:
         specifier: 'catalog:'
         version: 2.57.20(typescript@7.0.2)

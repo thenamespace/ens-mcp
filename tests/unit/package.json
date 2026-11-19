@@ -14,6 +14,7 @@
     "@thenamespace/ens-mcp": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:",
+    "fflate": "catalog:",
     "viem": "catalog:"
   }
 }
