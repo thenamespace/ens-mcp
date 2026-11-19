@@ -6,6 +6,7 @@ import { NameActivityResources } from "../resources/nameActivity.js";
 import { ChainResource } from "../resources/reference/chain.js";
 import { ErrorResources } from "../resources/reference/errors.js";
 import { RecordsResource } from "../resources/reference/records.js";
+import { EnsSkill } from "../skills/index.js";
 import { AdvancedTools } from "../tools/advanced/index.js";
 import { ListsTools } from "../tools/lists/index.js";
 import { LookupTools } from "../tools/lookup/index.js";
@@ -39,5 +40,6 @@ export const registrations = (enabled: ReadonlyArray<Toolset>) => {
     ChainResource,
     ErrorResources,
     RecordsResource,
+    EnsSkill,
   );
 };
