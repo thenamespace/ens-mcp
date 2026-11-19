@@ -2,3 +2,4 @@
 # inside .config/.
 pnpm-lock.yaml
 **/CHANGELOG.md
+packages/ens-mcp/src/skills/files.ts
