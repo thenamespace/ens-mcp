@@ -7,7 +7,7 @@ import { OfflineEns } from "../../support/ens.ts";
 describe("resolve_name", () => {
   it.effect("reports an unknown coin as a tool error", () =>
     Effect.gen(function* () {
-      const client = yield* mcpClient(OfflineEns);
+      const client = yield* mcpClient({ ens: OfflineEns });
 
       const result = yield* client.callTool({
         name: "resolve_name",
@@ -23,7 +23,7 @@ describe("resolve_name", () => {
 
   it.effect("fails invalid names one by one instead of the whole call", () =>
     Effect.gen(function* () {
-      const client = yield* mcpClient(OfflineEns);
+      const client = yield* mcpClient({ ens: OfflineEns });
 
       const result = yield* client.callTool({
         name: "resolve_name",
