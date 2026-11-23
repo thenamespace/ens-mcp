@@ -3,14 +3,11 @@ import { Layer } from "effect";
 import { Ensforge } from "@ensforge/sdk/effect";
 import type { Indexer } from "@ensforge/sdk/indexer";
 import { Ens } from "@thenamespace/ens-mcp/internal/ens/Ens";
-import { createPublicClient, custom } from "viem";
+import { custom } from "viem";
 import { mainnet } from "viem/chains";
 
-const offlineRpc = createPublicClient({
-  chain: mainnet,
-  transport: custom({
-    request: ({ method }) => Promise.reject(new Error(`Unexpected RPC request: ${method}`)),
-  }),
+const offlineRpc = custom({
+  request: ({ method }) => Promise.reject(new Error(`Unexpected RPC request: ${method}`)),
 });
 
 /** ENS on an RPC that rejects every request, with `indexer` when given. */
@@ -20,7 +17,9 @@ export const offlineEns = (options: { readonly indexer?: Indexer } = {}) =>
     Ens.of({
       chain: "mainnet",
       client: Ensforge.create({
-        publicClient: offlineRpc,
+        chain: mainnet,
+        transports: { [mainnet.id]: offlineRpc },
+        publicRpc: false,
         ...(options.indexer === undefined ? {} : { indexer: options.indexer }),
       }),
       hasIndexer: options.indexer !== undefined,

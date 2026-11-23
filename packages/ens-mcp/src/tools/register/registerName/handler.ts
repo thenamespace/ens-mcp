@@ -13,9 +13,10 @@ import type { RegisterName } from "./tool.js";
 
 const resolverOption = (resolver: typeof RegisterName.parametersSchema.Type.resolver) => {
   switch (resolver) {
+    // ensforge defaults to the shared resolver for names the signer owns; this tool documents its own.
     case undefined:
     case "own":
-      return {};
+      return { resolver: "new" };
     case "shared":
       return { resolver: "owned" };
     case "none":

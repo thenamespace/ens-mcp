@@ -21,7 +21,9 @@ export const hints: NonNullable<Errors.DescribeOptions["messages"]> = {
     action: "Retry shortly, or read the name on-chain with get_name_details.",
   }),
   INDEXER_UNSUPPORTED: () => ({
-    action: "The indexer cannot answer this query. Basenames are only available on mainnet.",
+    action:
+      "The indexer cannot answer this query: Basenames are indexed on mainnet only, and Linea " +
+      "Names and Celonames by no indexer. get_name_details and get_records read them on-chain.",
   }),
   RECORD_NOT_FOUND: () => ({
     action: "Give the address itself, or a name whose ETH address is set.",

@@ -23,7 +23,14 @@ export const GetPermissions = Tool.make("get_permissions", {
   success: Schema.Struct({
     name: Name,
     account: Address,
-    status: Schema.Literals(["available", "registered", "grace", "expired", "reserved"]),
+    status: Schema.Literals([
+      "available",
+      "registered",
+      "grace",
+      "expired",
+      "reserved",
+      "external",
+    ]),
     can: Schema.Struct({
       setRecords: Allowed,
       transfer: Allowed,

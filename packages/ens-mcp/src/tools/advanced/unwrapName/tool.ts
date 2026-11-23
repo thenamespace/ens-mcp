@@ -16,7 +16,7 @@ export const UnwrapName = Tool.make("unwrap_name", {
     name: Name,
     account: Account,
     owner: Schema.optionalKey(AddressOrName).annotate({
-      description: "Owner after unwrapping. Default: the account",
+      description: "Owner after unwrapping. Default: the name's current holder",
     }),
   }),
   success: PreparedWrite,

@@ -43,6 +43,10 @@ export const getNameDetails = (ens: Ens["Service"]) =>
     const gracePeriodEnd =
       state.gracePeriodEnd === null ? undefined : fromUnixSeconds(state.gracePeriodEnd);
     const resolverAddress = state.resolver ?? state.inheritedResolver;
+    const namespace =
+      state.namespace?.kind === "offchain"
+        ? { ...state.namespace, provider: state.namespace.provider?.name ?? null }
+        : state.namespace;
 
     return {
       name: state.name,
@@ -50,6 +54,7 @@ export const getNameDetails = (ens: Ens["Service"]) =>
         name: state.name,
         status: state.status,
         ensVersion: state.protocol,
+        namespace,
         owner: state.owner,
         wrapped: state.wrapped,
         expiry,
@@ -57,6 +62,7 @@ export const getNameDetails = (ens: Ens["Service"]) =>
       }),
       status: state.status,
       ensVersion: state.protocol,
+      ...(namespace === null ? {} : { namespace }),
       owner: state.owner,
       ...(state.manager === null ? {} : { manager: state.manager }),
       ...(state.registrant === null ? {} : { registrant: state.registrant }),

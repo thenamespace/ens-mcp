@@ -33,14 +33,14 @@ export const getPlanStatus = (ens: Ens["Service"]) =>
           [
             runEns(
               Rpc.fromPromise(() =>
-                getTransaction(ens.client.publicClient, { hash }).catch((error: unknown) =>
+                getTransaction(ens.client.client(), { hash }).catch((error: unknown) =>
                   error instanceof TransactionNotFoundError ? undefined : Promise.reject(error),
                 ),
               ),
             ),
             runEns(
               Rpc.fromPromise(() =>
-                getTransactionReceipt(ens.client.publicClient, { hash }).catch((error: unknown) =>
+                getTransactionReceipt(ens.client.client(), { hash }).catch((error: unknown) =>
                   error instanceof TransactionReceiptNotFoundError
                     ? undefined
                     : Promise.reject(error),
@@ -55,7 +55,7 @@ export const getPlanStatus = (ens: Ens["Service"]) =>
             ? undefined
             : yield* runEns(
                 Rpc.fromPromise(() =>
-                  getBlock(ens.client.publicClient, { blockNumber: receipt.blockNumber }),
+                  getBlock(ens.client.client(), { blockNumber: receipt.blockNumber }),
                 ),
               );
         const timestamp = block?.timestamp;
