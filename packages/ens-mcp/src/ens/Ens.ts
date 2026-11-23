@@ -2,7 +2,7 @@ import { Cause, Context, Duration, Effect, Layer, Option, Redacted } from "effec
 
 import { Ensforge } from "@ensforge/sdk/effect";
 import { bigname, fallback, goldsky } from "@ensforge/sdk/indexer";
-import { createPublicClient, http, type PublicClient } from "viem";
+import { createPublicClient, http, type Transport } from "viem";
 
 import { StartupError } from "../StartupError.js";
 import { viemChains, type Chain } from "./Chain.js";
@@ -32,8 +32,11 @@ export class Ens extends Context.Service<
     Layer.effect(
       Ens,
       Effect.gen(function* () {
+        const chain = viemChains[options.chain];
+        const transport = yield* rpcTransport(options);
         const client = Ensforge.create({
-          publicClient: yield* publicClient(options),
+          chain,
+          ...(transport === undefined ? {} : { transports: { [chain.id]: transport } }),
           ...(options.indexer === "none" ? {} : { indexer: indexer(options.chain) }),
         });
 
@@ -55,12 +58,12 @@ const indexer = (chain: Chain) =>
   chain === "mainnet" ? fallback([bigname(), goldsky()]) : bigname();
 
 /**
- * A viem client on the configured RPC, checked to serve the configured chain, or on viem's public
- * RPC with a warning.
+ * The configured RPC, checked to serve the configured chain, or `undefined` with a warning for
+ * viem's public RPC. L2 namespaces are always read through their chains' public RPCs.
  */
-const publicClient = Effect.fnUntraced(function* (
+const rpcTransport = Effect.fnUntraced(function* (
   options: EnsOptions,
-): Effect.fn.Return<PublicClient, StartupError> {
+): Effect.fn.Return<Transport | undefined, StartupError> {
   const chain = viemChains[options.chain];
   if (Option.isNone(options.rpcUrl)) {
     if (options.requireRpc)
@@ -70,13 +73,11 @@ const publicClient = Effect.fnUntraced(function* (
     yield* Effect.logWarning(
       `Using a public RPC for ${options.chain}; set ENS_MCP_RPC_URL for reliable access.`,
     );
-    return createPublicClient({ chain, transport: http() });
+    return undefined;
   }
 
-  const client = createPublicClient({
-    chain,
-    transport: http(Redacted.value(options.rpcUrl.value)),
-  });
+  const transport = http(Redacted.value(options.rpcUrl.value));
+  const client = createPublicClient({ chain, transport });
   // A wrong-chain RPC would answer every lookup from the wrong ENS; an unreachable one may recover,
   // so only a mismatch stops the server.
   const chainId = yield* Effect.tryPromise({
@@ -89,5 +90,5 @@ const publicClient = Effect.fnUntraced(function* (
     return yield* StartupError.make({
       message: `ENS_MCP_RPC_URL serves chain ${chainId.value}, not ${options.chain} (${chain.id}).`,
     });
-  return client;
+  return transport;
 });

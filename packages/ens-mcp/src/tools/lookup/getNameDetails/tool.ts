@@ -14,7 +14,8 @@ export const GetNameDetails = Tool.make("get_name_details", {
   description:
     "Get an ENS name's ownership and registration state, e.g. 'Who owns ens.eth and when does " +
     "it expire?'. Returns a one-line summary, status (available, registered, grace, expired, " +
-    "reserved), ENS version, owner, manager and registrant, resolver, expiry and grace period, " +
+    "reserved, or external for names served by an L2 namespace or off-chain gateway), ENS " +
+    "version (v1, v2 or l2), where an L2 or off-chain name lives, owner, manager and registrant, resolver, expiry and grace period, " +
     "and whether it is wrapped, can be registered or renewed. Ask for burned NameWrapper fuses " +
     "or ENSv2 migration readiness with include. To check what one account may do, use " +
     "get_permissions.",
@@ -28,8 +29,34 @@ export const GetNameDetails = Tool.make("get_name_details", {
   success: Schema.Struct({
     name: Name,
     summary: Schema.String,
-    status: Schema.Literals(["available", "registered", "grace", "expired", "reserved"]),
-    ensVersion: Schema.Literals(["v1", "v2"]),
+    status: Schema.Literals([
+      "available",
+      "registered",
+      "grace",
+      "expired",
+      "reserved",
+      "external",
+    ]),
+    ensVersion: Schema.Literals(["v1", "v2", "l2"]),
+    namespace: Schema.optionalKey(
+      Schema.Union([
+        Schema.Struct({
+          kind: Schema.Literal("l2"),
+          id: Schema.String.annotate({ description: "e.g. basenames, linea, durin" }),
+          parent: Schema.String.annotate({ description: "e.g. base.eth" }),
+          chainId: Schema.Int,
+          registry: Schema.NullOr(Address),
+        }),
+        Schema.Struct({
+          kind: Schema.Literal("offchain"),
+          provider: Schema.NullOr(Schema.String).annotate({ description: "e.g. Coinbase" }),
+          parent: Schema.String.annotate({ description: "The name whose gateway serves it" }),
+        }),
+      ]),
+    ).annotate({
+      description:
+        "Where a name outside ENS's registries lives: an L2 namespace or off-chain provider",
+    }),
     owner: Schema.NullOr(Address).annotate({ description: "Who ultimately controls the name" }),
     manager: Schema.optionalKey(Address).annotate({
       description: "ENSv1 registry owner (the ENS app's manager), when the name has one",

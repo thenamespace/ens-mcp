@@ -3,8 +3,13 @@ import { String as Str } from "effect";
 /** The facts of a name the summary describes. */
 export type SummaryFacts = {
   readonly name: string;
-  readonly status: "available" | "registered" | "grace" | "expired" | "reserved";
-  readonly ensVersion: "v1" | "v2";
+  readonly status: "available" | "registered" | "grace" | "expired" | "reserved" | "external";
+  readonly ensVersion: "v1" | "v2" | "l2";
+  /** Where a name outside ENS's registries lives; `null` for names in ENS. */
+  readonly namespace:
+    | { readonly kind: "l2"; readonly id: string; readonly chainId: number }
+    | { readonly kind: "offchain"; readonly provider: string | null; readonly parent: string }
+    | null;
   readonly owner: string | null;
   readonly wrapped: boolean;
   /** ISO timestamps. */
@@ -19,10 +24,22 @@ const day = (iso: string) => Str.slice(0, 10)(iso);
  * 0x…, and expires on 2035-01-10 (in 3,000 days)."
  */
 export const summarize = (facts: SummaryFacts): string => {
-  const { name, expiry } = facts;
+  const { name, expiry, namespace } = facts;
+  const l2 = namespace?.kind === "l2" ? `${namespace.id} (chain ${namespace.chainId})` : undefined;
   switch (facts.status) {
     case "available":
-      return `${name} is available to register.`;
+      return l2 === undefined
+        ? `${name} is available to register.`
+        : `${name} is available on ${l2}, registered there rather than through ENS.`;
+    case "external": {
+      const manager =
+        namespace === null
+          ? "a parent name's resolver"
+          : namespace.kind === "l2"
+            ? l2
+            : (namespace.provider ?? `${namespace.parent}'s gateway`);
+      return `${name} is managed outside ENS's registries, by ${manager}, and cannot be registered through ENS.`;
+    }
     case "reserved":
       return `${name} is reserved on ENSv2 and cannot be registered.`;
     case "expired":
@@ -43,5 +60,5 @@ export const summarize = (facts: SummaryFacts): string => {
     expiry === undefined
       ? "does not expire"
       : `expires on ${day(expiry.at)} (in ${expiry.daysLeft.toLocaleString("en-US")} days)`;
-  return `${name} is registered on ENS${facts.ensVersion}${wrapped}${holder}, and ${ends}.`;
+  return `${name} is registered on ${l2 ?? `ENS${facts.ensVersion}`}${wrapped}${holder}, and ${ends}.`;
 };
