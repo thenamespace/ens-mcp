@@ -1,5 +1,5 @@
 ---
-"@thenamespace/ens-mcp": minor
+"@thenamespace/ens-mcp": patch
 ---
 
 Upgrade ensforge to 1.2.0. `get_name_details` now reports names that live on an L2 namespace
